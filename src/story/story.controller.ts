@@ -27,7 +27,7 @@ export class StoryController {
     @Query()
     query: {
       fields: string;
-      filter: string;
+      filter: object;
       limit: number;
       page: number;
       meta: {
@@ -36,10 +36,6 @@ export class StoryController {
       };
     },
   ) {
-    /*
-    /story?fields=title,slug&filter[title]=
-    */
-
     return this.storyService.find(query);
   }
 

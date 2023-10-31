@@ -7,13 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model author {
-  id                         Int     @id @default(autoincrement())
-  title                      String  @db.VarChar(255)
-  slug                       String  @db.VarChar(255)
-  story_story_authorToauthor story[] @relation("story_authorToauthor")
-}
-
 model category {
   id             Int              @id @default(autoincrement())
   slug           String           @db.VarChar(255)
@@ -22,16 +15,16 @@ model category {
 }
 
 model story {
-  id                          Int              @id @default(autoincrement())
-  slug                        String           @db.VarChar(255)
-  title                       String           @db.VarChar(255)
-  author                      Int
-  time_created                DateTime?        @default(now()) @db.Timestamp(0)
-  time_updated                DateTime?        @default(now()) @db.Timestamp(0)
-  description                 String           @db.Text
-  status                      String           @default("Đang ra") @db.VarChar(255)
-  author_story_authorToauthor author           @relation("story_authorToauthor", fields: [author], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "story_ibfk_1")
-  story_category              story_category[]
+  id             Int              @id @default(autoincrement())
+  slug           String           @db.VarChar(255)
+  title          String           @db.VarChar(255)
+  author         Int
+  time_created   DateTime?        @default(now()) @db.Timestamp(0)
+  time_updated   DateTime?        @default(now()) @db.Timestamp(0)
+  description    String           @db.Text
+  status         String           @default("Đang ra") @db.VarChar(255)
+  story_author   author           @relation("story_authorToauthor", fields: [author], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "story_ibfk_1")
+  story_category story_category[]
 
   @@index([author], map: "author")
 }
@@ -45,4 +38,11 @@ model story_category {
 
   @@index([category_id], map: "category_id")
   @@index([story_id], map: "story_id")
+}
+
+model author {
+  id     Int     @id @default(autoincrement())
+  title  String  @db.VarChar(255)
+  slug   String  @db.VarChar(255)
+  author story[] @relation("story_authorToauthor")
 }

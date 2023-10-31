@@ -62,3 +62,13 @@ export function getLastKey(object: any, valueToFind: any) {
     return getLastValue(object[prop]);
   }
 }
+
+export const convertIdFromString = (object: object) => {
+  if (typeof object !== 'object') return;
+  for (const prop in object) {
+    try {
+      if (prop === 'id') object[prop] = Number(object[prop]);
+    } catch (error) {}
+    return convertIdFromString(object[prop]);
+  }
+};

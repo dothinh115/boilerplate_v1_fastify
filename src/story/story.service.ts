@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { getLastKey, getLastValue, toUrlCode } from 'utils/function';
+import {
+  convertIdFromString,
+  getLastKey,
+  getLastValue,
+  toUrlCode,
+} from 'utils/function';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
@@ -40,7 +45,7 @@ export class StoryService {
 
   async find(query: {
     fields: string;
-    filter: string;
+    filter: object;
     limit: number;
     page: number;
     meta: {
@@ -49,52 +54,38 @@ export class StoryService {
     };
   }) {
     let { fields, filter } = query;
-    console.log(filter);
-    if (!fields) fields = '*';
-    /*
-      author_story_authorToauthor: {
-        id: {
-          _eq: 2
-        }
-      }
-    */
     let lastValue: string | number | boolean, lastKey: string;
     if (filter) {
       lastValue = getLastValue(filter);
       lastKey = getLastKey(filter, lastValue);
     }
-    let fieldsArr = fields.split(',').filter((item: string) => item !== '');
+    let fieldsArr = fields
+      ? fields.split(',').filter((item: string) => item !== '')
+      : [];
+
     let selectObj: any = {};
     if (fieldsArr && fieldsArr.length > 0) {
       for (const field of fieldsArr) {
-        if (field === '*') continue;
         selectObj[field] = true;
       }
     }
 
-    const select = Object.keys(selectObj).length > 0 ? {
-      select: selectObj
-    } : {
-      include:true
-    }
+    if (filter) convertIdFromString(filter);
 
     const result = await this.prisma.story.findMany({
-      include: {
-        
-      },
+      ...(Object.keys(selectObj).length > 0 && {
+        select: selectObj,
+      }),
+      ...(filter &&
+        Object.keys(filter).length > 0 && {
+          where: filter,
+        }),
       ...(query.limit &&
         query.page && {
           skip: (Number(query.page) - 1) * Number(query.limit),
           take: Number(query.limit),
         }),
     });
-    // for (const item of resultAllFields) {
-    //   const resultObj = {};
-    //   for (const field of fieldsArr) {
-    //     resultObj[field] = item[field];
-    //   }
-    //   result = [...result, resultObj];
-    // }
 
     return {
       result,
