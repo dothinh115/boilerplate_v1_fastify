@@ -54,11 +54,6 @@ export class StoryService {
     };
   }) {
     let { fields, filter } = query;
-    let lastValue: string | number | boolean, lastKey: string;
-    if (filter) {
-      lastValue = getLastValue(filter);
-      lastKey = getLastKey(filter, lastValue);
-    }
     let fieldsArr = fields
       ? fields.split(',').filter((item: string) => item !== '')
       : [];
@@ -69,8 +64,6 @@ export class StoryService {
         selectObj[field] = true;
       }
     }
-
-    if (filter) convertIdFromString(filter);
 
     const result = await this.prisma.story.findMany({
       ...(Object.keys(selectObj).length > 0 && {
