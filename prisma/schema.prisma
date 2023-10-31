@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model author {
+  id                         Int     @id @default(autoincrement())
+  title                      String  @db.VarChar(255)
+  slug                       String  @db.VarChar(255)
+  story_story_authorToauthor story[] @relation("story_authorToauthor")
+}
+
+model category {
+  id             Int              @id @default(autoincrement())
+  slug           String           @db.VarChar(255)
+  title          String           @db.VarChar(255)
+  story_category story_category[]
+}
+
+model story {
+  id                          Int              @id @default(autoincrement())
+  slug                        String           @db.VarChar(255)
+  title                       String           @db.VarChar(255)
+  author                      Int
+  time_created                DateTime?        @default(now()) @db.Timestamp(0)
+  time_updated                DateTime?        @default(now()) @db.Timestamp(0)
+  description                 String           @db.Text
+  status                      String           @default("Đang ra") @db.VarChar(255)
+  author_story_authorToauthor author           @relation("story_authorToauthor", fields: [author], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "story_ibfk_1")
+  story_category              story_category[]
+
+  @@index([author], map: "author")
+}
+
+model story_category {
+  id          Int      @id @default(autoincrement())
+  story_id    Int
+  category_id Int
+  story       story    @relation(fields: [story_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "story_category_ibfk_1")
+  category    category @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "story_category_ibfk_2")
+
+  @@index([category_id], map: "category_id")
+  @@index([story_id], map: "story_id")
+}
