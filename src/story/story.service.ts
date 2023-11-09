@@ -1,89 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import {
-  convertIdFromString,
-  getLastKey,
-  getLastValue,
-  toUrlCode,
-} from 'utils/function';
-import { PrismaService } from 'nestjs-prisma';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Story } from './schema/story.schema';
+import { toSlug } from 'utils/function';
+import { Author } from 'src/author/schema/author.schema';
+import { Category } from 'src/category/schema/category.schema';
 
 @Injectable()
 export class StoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectModel(Story.name) private storyModel: Model<Story>,
+    @InjectModel(Author.name) private authorModel: Model<Author>,
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
+  ) {}
   async create(payload: CreateStoryDto) {
-    const newStory = await this.prisma.story.create({
-      data: {
-        title: payload.title,
-        description: payload.description,
-        author: payload.author,
-        slug: toUrlCode(payload.title),
+    const { title, category_id, description } = payload;
+    const lastRecord = await this.storyModel.find().sort({ _id: -1 }).limit(1);
+
+    const _id = lastRecord.length === 0 ? 1 : lastRecord[0]._id + 1;
+    const data = {
+      _id,
+      title,
+      author: payload.author,
+      category: category_id,
+      description,
+      slug: toSlug(title),
+    };
+    const result = await this.storyModel.create(data);
+    result.author = await this.authorModel.findById(payload.author);
+    result.category = await this.categoryModel.find({
+      _id: {
+        $in: category_id,
       },
     });
-
-    let category: any[] = [];
-
-    for (const id of payload.category_id) {
-      const newStoryCategory = await this.prisma.story_category.create({
-        data: {
-          story_id: newStory.id,
-          category_id: id,
-        },
-        include: {
-          category: true,
-        },
-      });
-      category = [...category, newStoryCategory];
-    }
-
-    return {
-      ...newStory,
-      category,
-    };
+    return result;
   }
 
-  async find(query: {
-    fields: string;
-    filter: object;
-    limit: number;
-    page: number;
-    meta: {
-      total_count: boolean;
-      filter_count: boolean;
-    };
-  }) {
-    let { fields, filter } = query;
-    let fieldsArr = fields
-      ? fields.split(',').filter((item: string) => item !== '')
-      : [];
-
-    let selectObj: any = {};
-    if (fieldsArr && fieldsArr.length > 0) {
-      for (const field of fieldsArr) {
-        selectObj[field] = true;
-      }
-    }
-
-    const result = await this.prisma.story.findMany({
-      ...(Object.keys(selectObj).length > 0 && {
-        select: selectObj,
-      }),
-      ...(filter &&
-        Object.keys(filter).length > 0 && {
-          where: filter,
-        }),
-      ...(query.limit &&
-        query.page && {
-          skip: (Number(query.page) - 1) * Number(query.limit),
-          take: Number(query.limit),
-        }),
-    });
-
-    return {
-      result,
-    };
-  }
+  async find() {}
 
   // findOne(id: number) {
   //   return `This action returns a #${id} story`;

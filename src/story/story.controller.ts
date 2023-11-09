@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 
 @Controller('story')
+@UsePipes(new ValidationPipe())
 export class StoryController {
   constructor(private readonly storyService: StoryService) {}
 
@@ -36,7 +39,7 @@ export class StoryController {
       };
     },
   ) {
-    return this.storyService.find(query);
+    return this.storyService.find();
   }
 
   // @Get(':id')
