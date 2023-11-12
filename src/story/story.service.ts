@@ -7,7 +7,6 @@ import { Story } from './schema/story.schema';
 import { toSlug } from 'utils/function';
 import { Author } from 'src/author/schema/author.schema';
 import { Category } from 'src/category/schema/category.schema';
-
 @Injectable()
 export class StoryService {
   constructor(
@@ -15,6 +14,7 @@ export class StoryService {
     @InjectModel(Author.name) private authorModel: Model<Author>,
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
+
   async create(payload: CreateStoryDto) {
     const { title, category_id, description } = payload;
     const lastRecord = await this.storyModel.find().sort({ _id: -1 }).limit(1);
@@ -38,7 +38,61 @@ export class StoryService {
     return result;
   }
 
-  async find() {}
+  async find(query: {
+    fields: string;
+    filter: object;
+    limit: number;
+    page: number;
+    meta: {
+      total_count: boolean;
+      filter_count: boolean;
+    };
+  }) {
+    const { fields } = query;
+    const nestedArr = fields
+      .split(',')
+      .filter((item) => item !== '')
+      .filter((item) => item !== '*');
+    let selectedProps: any;
+    for (const select of nestedArr) {
+      selectedProps = {
+        ...selectedProps,
+        [select]: true,
+      };
+    }
+
+    let result: any;
+    result = await this.storyModel.find().lean();
+
+    for (const index in result) {
+      if (nestedArr.length > 0) {
+        for (const item of nestedArr) {
+          try {
+            result[index] = {
+              ...result[index],
+              [item]: await this[`${item}Model`].find({
+                _id: {
+                  $in: result[index][item],
+                },
+              }),
+            };
+          } catch (error) {}
+        }
+      }
+    }
+
+    let newResult: any;
+    for (const item of query.fields.split(',')) {
+      if (item === '*') {
+        newResult = result;
+        break;
+      } else {
+        newResult[item] = result[item];
+      }
+    }
+
+    return newResult;
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} story`;

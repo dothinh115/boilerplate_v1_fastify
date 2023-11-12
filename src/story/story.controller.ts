@@ -39,7 +39,7 @@ export class StoryController {
       };
     },
   ) {
-    return this.storyService.find();
+    return this.storyService.find(query);
   }
 
   // @Get(':id')

@@ -14,8 +14,8 @@ export class Story {
   slug: string;
   @Prop({ required: true, type: mongoose.Schema.Types.Number, ref: 'Author' })
   author: Author;
-  @Prop({ required: true, type: mongoose.Schema.Types.Number, ref: 'Category' })
-  category: Category[];
+  @Prop({ required: true })
+  category: any[];
   @Prop({ required: true })
   description: string;
   @Prop()
