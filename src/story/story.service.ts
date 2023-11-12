@@ -81,14 +81,18 @@ export class StoryService {
       }
     }
 
-    let newResult: any;
-    for (const item of query.fields.split(',')) {
-      if (item === '*') {
-        newResult = result;
-        break;
-      } else {
-        newResult[item] = result[item];
+    let newResult: any[] = [];
+    for (const index in result) {
+      let x = {};
+      for (const item of query.fields.split(',')) {
+        if (item === '*') {
+          newResult = result;
+          break;
+        } else {
+          x[item] = result[index][item];
+        }
       }
+      newResult = [...newResult, x];
     }
 
     return newResult;
