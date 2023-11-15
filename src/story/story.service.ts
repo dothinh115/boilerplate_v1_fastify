@@ -3,7 +3,7 @@ import { CreateStoryDto } from './dto/create-story.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Story, StorySchema } from './schema/story.schema';
-import { getLastKey, getLastValue, handleFilter, toSlug } from 'utils/function';
+import { handleFilter, toSlug } from 'utils/function';
 
 @Injectable()
 export class StoryService {
