@@ -41,6 +41,8 @@ export class StoryService {
     let pathArr: string[] = [];
     let select: any;
     let filter: any;
+    let total_count: number;
+    let filter_count: number;
     if (query.populate) {
       const paths = query.populate
         .split(',')
@@ -68,11 +70,17 @@ export class StoryService {
     if (query.filter) {
       filter = handleFilter(query.filter);
     }
-    result = await this.storyModel
-      .find({ ...filter }, { ...select })
-      .populate(pathArr);
+    try {
+      result = await this.storyModel
+        .find({ ...filter }, { ...select })
+        .populate(pathArr)
+        .skip(+query.page - 1 * +query.limit)
+        .limit(+query.limit);
+      total_count = await this.storyModel.find().count();
+      filter_count = await this.storyModel.find({ ...filter }).count();
+    } catch (error) {}
 
-    return result;
+    return { data: result, meta: { total_count, filter_count } };
   }
 
   // findOne(id: number) {
