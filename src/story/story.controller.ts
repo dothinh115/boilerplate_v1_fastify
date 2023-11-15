@@ -33,6 +33,7 @@ export class StoryController {
       filter: object;
       limit: number;
       page: number;
+      populate: string;
       meta: {
         total_count: boolean;
         filter_count: boolean;
