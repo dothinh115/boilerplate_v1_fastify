@@ -37,13 +37,13 @@ export class StoryService {
       filter_count: boolean;
     };
   }) {
-    let queryResult: any;
     let result: any[] = [];
     let pathArr: any[] = [];
     let select: any;
     let filter: any;
     let total_count: number;
     let filter_count: number;
+    let selectAll = false;
     if (query.fields) {
       const fieldArr = query.fields
         .split(',')
@@ -86,35 +86,26 @@ export class StoryService {
             [field]: 1,
           };
       }
+      for (const field of fieldArr) {
+        if (field === '*') {
+          select = undefined;
+          break;
+        }
+      }
     }
     if (query.filter) {
       filter = handleFilter(query.filter);
     }
     try {
-      queryResult = await this.storyModel
-        .find({ ...filter })
+      result = await this.storyModel
+        .find({ ...filter }, { ...select })
         .populate(pathArr)
         .skip(+query.page - 1 * +query.limit)
-        .limit(+query.limit);
+        .limit(+query.limit)
+        .lean();
       total_count = await this.storyModel.find().count();
       filter_count = await this.storyModel.find({ ...filter }).count();
     } catch (error) {}
-    if (select) {
-      for (const field of Object.keys(select)) {
-        if (field === '*') {
-          result = queryResult;
-          break;
-        }
-        for (const index in queryResult) {
-          result = [
-            ...result,
-            {
-              [field]: queryResult[index][field],
-            },
-          ];
-        }
-      }
-    }
     return { data: result, meta: { total_count, filter_count } };
   }
 
