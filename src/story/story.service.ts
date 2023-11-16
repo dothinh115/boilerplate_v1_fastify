@@ -43,26 +43,32 @@ export class StoryService {
     let filter: any;
     let total_count: number;
     let filter_count: number;
-    let selectAll = false;
     if (query.fields) {
+      //Bóc tách lấy các field cần
       const fieldArr = query.fields
         .split(',')
         .filter((item: string) => item !== '');
+      //chạy vòng lặp qua các field
       for (const field of fieldArr) {
+        //kiểm tra xem có select nested field hay ko
         if (field.includes('.')) {
           const nestedField = field
             .split('.')
             .filter((item: string) => item !== '');
+          //nếu có thì cần select tầng đầu tiên
           select = {
             ...select,
             [nestedField[0]]: 1,
           };
+          //cần phải populate tầng đầu tiên
           let popuplateObj: any = {
             path: nestedField[0],
           };
+          //tiếp tục lặp qua các field (bỏ qua tầng đầu tiên) để select các field bên trong
           for (const selectField of nestedField.slice(1)) {
             popuplateObj = {
               ...popuplateObj,
+              //nếu ko phải là * thì add các field cần select vào, nếu là * thì bỏ trống -> lấy hết
               ...(selectField !== '*' && {
                 select: popuplateObj['select']
                   ? popuplateObj['select'] + ' ' + selectField
@@ -70,15 +76,18 @@ export class StoryService {
               }),
             };
           }
+          //tìm xem bên trong pathArr đã có tầng lớn nhất cần dc populate chưa
           const findIndex = pathArr.findIndex(
             (item: { path: string }) => item.path === popuplateObj['path'],
           );
+          //nếu đã có thì tiến hành thay đổi trường select bên trong
           if (findIndex !== -1)
             pathArr[findIndex] = {
               ...pathArr[findIndex],
               select:
                 pathArr[findIndex]['select'] + ' ' + popuplateObj['select'],
             };
+          //nếu chưa có thì add vào
           else pathArr = [...pathArr, popuplateObj];
         } else
           select = {
