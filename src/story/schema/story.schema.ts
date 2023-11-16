@@ -19,8 +19,6 @@ export class Story {
   category: Category[];
   @Prop({ required: true })
   description: string;
-  @Prop()
-  chapter: number[];
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);
