@@ -37,7 +37,8 @@ export class StoryService {
       filter_count: boolean;
     };
   }) {
-    let result: any;
+    let queryResult: any;
+    let result: any[] = [];
     let pathArr: any[] = [];
     let select: any;
     let filter: any;
@@ -47,7 +48,6 @@ export class StoryService {
       const fieldArr = query.fields
         .split(',')
         .filter((item: string) => item !== '');
-
       for (const field of fieldArr) {
         if (field.includes('.')) {
           const nestedField = field
@@ -70,7 +70,16 @@ export class StoryService {
               }),
             };
           }
-          pathArr = [...pathArr, popuplateObj];
+          const findIndex = pathArr.findIndex(
+            (item: { path: string }) => item.path === popuplateObj['path'],
+          );
+          if (findIndex !== -1)
+            pathArr[findIndex] = {
+              ...pathArr[findIndex],
+              select:
+                pathArr[findIndex]['select'] + ' ' + popuplateObj['select'],
+            };
+          else pathArr = [...pathArr, popuplateObj];
         } else
           select = {
             ...select,
@@ -82,15 +91,30 @@ export class StoryService {
       filter = handleFilter(query.filter);
     }
     try {
-      result = await this.storyModel
-        .find({ ...filter }, { ...select })
+      queryResult = await this.storyModel
+        .find({ ...filter })
         .populate(pathArr)
         .skip(+query.page - 1 * +query.limit)
         .limit(+query.limit);
       total_count = await this.storyModel.find().count();
       filter_count = await this.storyModel.find({ ...filter }).count();
     } catch (error) {}
-
+    if (select) {
+      for (const field of Object.keys(select)) {
+        if (field === '*') {
+          result = queryResult;
+          break;
+        }
+        for (const index in queryResult) {
+          result = [
+            ...result,
+            {
+              [field]: queryResult[index][field],
+            },
+          ];
+        }
+      }
+    }
     return { data: result, meta: { total_count, filter_count } };
   }
 
