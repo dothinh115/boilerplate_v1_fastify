@@ -38,7 +38,7 @@ export class StoryService {
     };
   }) {
     let result: any;
-    let pathArr: string[] = [];
+    let pathArr: any[] = [];
     let select: any;
     let filter: any;
     let total_count: number;
@@ -57,14 +57,20 @@ export class StoryService {
             ...select,
             [nestedField[0]]: 1,
           };
-          StorySchema.eachPath((storyPath) => {
-            if (nestedField[0] === storyPath) {
-              pathArr = [...pathArr, nestedField[0]];
-            }
-          });
-          for (const nestedSelect of nestedField.slice(1)) {
-            console.log(nestedSelect);
+          let popuplateObj: any = {
+            path: nestedField[0],
+          };
+          for (const selectField of nestedField.slice(1)) {
+            popuplateObj = {
+              ...popuplateObj,
+              ...(selectField !== '*' && {
+                select: popuplateObj['select']
+                  ? popuplateObj['select'] + ' ' + selectField
+                  : selectField,
+              }),
+            };
           }
+          pathArr = [...pathArr, popuplateObj];
         } else
           select = {
             ...select,
