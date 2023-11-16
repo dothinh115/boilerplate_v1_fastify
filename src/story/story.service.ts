@@ -43,28 +43,33 @@ export class StoryService {
     let filter: any;
     let total_count: number;
     let filter_count: number;
-    if (query.populate) {
-      const paths = query.populate
-        .split(',')
-        .filter((item: string) => item !== '');
-
-      StorySchema.eachPath((storyPath) => {
-        for (const path of paths) {
-          if (path === storyPath) {
-            pathArr = [...pathArr, path];
-          }
-        }
-      });
-    }
     if (query.fields) {
       const fieldArr = query.fields
         .split(',')
         .filter((item: string) => item !== '');
+
       for (const field of fieldArr) {
-        select = {
-          ...select,
-          [field]: 1,
-        };
+        if (field.includes('.')) {
+          const nestedField = field
+            .split('.')
+            .filter((item: string) => item !== '');
+          select = {
+            ...select,
+            [nestedField[0]]: 1,
+          };
+          StorySchema.eachPath((storyPath) => {
+            if (nestedField[0] === storyPath) {
+              pathArr = [...pathArr, nestedField[0]];
+            }
+          });
+          for (const nestedSelect of nestedField.slice(1)) {
+            console.log(nestedSelect);
+          }
+        } else
+          select = {
+            ...select,
+            [field]: 1,
+          };
       }
     }
     if (query.filter) {
