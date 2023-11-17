@@ -3,7 +3,8 @@ import { CreateStoryDto } from './dto/create-story.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Story } from './schema/story.schema';
-import { handleFilter, toSlug } from 'utils/function';
+import { handleFilter } from 'utils/handleFields';
+import { toSlug } from 'utils/function';
 
 @Injectable()
 export class StoryService {
@@ -25,6 +26,123 @@ export class StoryService {
     const result = await this.storyModel.create(data);
     return result;
   }
+
+  // async find(query: {
+  //   fields: string;
+  //   filter: object;
+  //   limit: number;
+  //   page: number;
+  //   populate: string;
+  //   meta: {
+  //     total_count: boolean;
+  //     filter_count: boolean;
+  //   };
+  // }) {
+  //   let result: any[] = [];
+  //   let pathArr: any[] = [];
+  //   let select: any;
+  //   let filter: any;
+  //   let total_count: number;
+  //   let filter_count: number;
+  //   if (query.fields) {
+  //     //Bóc tách lấy các field cần
+  //     const fieldArr = query.fields
+  //       .split(',')
+  //       .filter((item: string) => item !== '');
+  //     //chạy vòng lặp qua các field
+  //     for (const field of fieldArr) {
+  //       //kiểm tra xem có select nested field hay ko
+  //       if (field.includes('.')) {
+  //         const nestedFieldArr = field
+  //           .split('.')
+  //           .filter((item: string) => item !== '');
+  //         //nếu có thì cần select tầng đầu tiên
+  //         select = {
+  //           ...select,
+  //           [nestedFieldArr[0]]: 1,
+  //         };
+  //         let popuplateObj: any = {};
+  //         if (nestedFieldArr.length > 2) {
+  //           popuplateObj = nestedFieldArr.reduceRight(
+  //             (prev, cur, index) => {
+  //               if (index + 1 === nestedFieldArr.length) {
+  //                 return;
+  //               }
+  //               return {
+  //                 path: cur,
+  //                 populate: prev,
+  //               };
+  //             },
+  //             { populate: {} },
+  //           );
+
+  //           const findPopulateIndex = pathArr.findIndex(
+  //             (item: { path: string }) => item.path === popuplateObj.path,
+  //           );
+
+  //           if (findPopulateIndex !== -1) {
+  //             const last = getLastValue(
+  //               handleNestedPopulate(popuplateObj, nestedFieldArr),
+  //             );
+  //             pathArr[findPopulateIndex] = handleMergeObject(
+  //               pathArr[findPopulateIndex],
+  //               last,
+  //             );
+  //           } else {
+  //             pathArr = [
+  //               ...pathArr,
+  //               handleNestedPopulate(popuplateObj, nestedFieldArr),
+  //             ];
+  //           }
+  //         } else {
+  //           popuplateObj = {
+  //             path: nestedFieldArr[0],
+  //             ...(nestedFieldArr[1] !== '*' && {
+  //               select: nestedFieldArr[1],
+  //             }),
+  //           };
+  //           const findPopulateIndex = pathArr.findIndex(
+  //             (item: { path: string }) => item.path === popuplateObj.path,
+  //           );
+  //           if (findPopulateIndex !== -1) {
+  //             pathArr[findPopulateIndex] = {
+  //               ...pathArr[findPopulateIndex],
+  //               select:
+  //                 pathArr[findPopulateIndex]['select'] +
+  //                 ' ' +
+  //                 popuplateObj.select,
+  //             };
+  //           } else pathArr = [...pathArr, popuplateObj];
+  //         }
+  //       } else
+  //         select = {
+  //           ...select,
+  //           [field]: 1,
+  //         };
+  //     }
+
+  //     for (const field of fieldArr) {
+  //       if (field === '*') {
+  //         select = undefined;
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   if (query.filter) {
+  //     filter = handleFilter(query.filter);
+  //   }
+  //   try {
+  //     result = await this.storyModel
+  //       .find({ ...filter }, { ...select })
+  //       .populate(pathArr)
+  //       .skip(+query.page - 1 * +query.limit)
+  //       .limit(+query.limit)
+  //       .lean();
+  //     total_count = await this.storyModel.find().count();
+  //     filter_count = await this.storyModel.find({ ...filter }).count();
+  //   } catch (error) {}
+  //   return { data: result, meta: { total_count, filter_count } };
+  // }
 
   async find(query: {
     fields: string;
