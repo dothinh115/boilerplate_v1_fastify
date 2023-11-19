@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Category } from 'src/category/schema/category.schema';
 export type AuthorDocument = HydratedDocument<Author>;
 
 @Schema()
@@ -11,6 +11,8 @@ export class Author {
   name: string;
   @Prop({ required: true })
   slug: string;
+  @Prop({ required: true, type: mongoose.Types.Array, ref: 'Category' })
+  category: Category[];
 }
 
 export const AuthorSchema = SchemaFactory.createForClass(Author);

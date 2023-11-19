@@ -17,10 +17,11 @@ export class AuthorService {
     const lastRecord = await this.authorModel.find().sort({ _id: -1 }).limit(1);
 
     const _id = lastRecord.length === 0 ? 1 : lastRecord[0]._id + 1;
-    const data: Author = {
+    const data: any = {
       _id,
       name,
       slug: toSlug(name),
+      category: payload.category,
     };
     const result = await this.authorModel.create(data);
     return result;
