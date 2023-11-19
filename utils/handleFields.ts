@@ -1,4 +1,14 @@
-export const createFieldObj = (fieldString: string) => {
+type TPrev = {
+  path?: string;
+  populate?: any;
+  select?: string;
+};
+export const createFieldObj = (
+  fieldString: string,
+): {
+  selectObj: any;
+  fieldSplit: TPrev[];
+} => {
   let fieldHandle: any = {},
     selectObj: any;
   const fieldArr = fieldString.split(',').filter((item: string) => item !== '');
@@ -18,23 +28,20 @@ export const createFieldObj = (fieldString: string) => {
           ...fieldHandle,
           [removeLastEl]: lastEl,
         };
-      else fieldHandle[removeLastEl] = fieldHandle[removeLastEl] + ' ' + lastEl;
+      else {
+        if (!fieldHandle[removeLastEl].includes('*'))
+          fieldHandle[removeLastEl] = fieldHandle[removeLastEl] + ' ' + lastEl;
+      }
     } else
       selectObj = {
         ...selectObj,
         [field]: 1,
       };
   }
-  let fieldSplit: any[] = [];
+  let fieldSplit: TPrev[] = [];
   for (const [key, value] of Object.entries(fieldHandle)) {
-    //key: 'author.category' ---- value: 'c d'
     const keySplit = key.split('.').filter((item: string) => item !== '');
-    let populateObj: any;
-    type TPrev = {
-      path?: string;
-      populate?: any;
-      select?: string;
-    };
+    let populateObj: TPrev;
     if (keySplit.length > 1) {
       populateObj = keySplit.reduceRight(
         (prev: TPrev, cur: string, index) => {
@@ -55,7 +62,7 @@ export const createFieldObj = (fieldString: string) => {
       populateObj = {
         path: key,
         ...(value !== '*' && {
-          select: value,
+          select: value as string,
         }),
       };
     }
@@ -83,6 +90,9 @@ export const createFieldObj = (fieldString: string) => {
       selectObj = undefined;
       break;
     }
+  }
+  for (const item of fieldSplit) {
+    if (item['select']?.includes('*')) delete item['select'];
   }
   return {
     selectObj,
