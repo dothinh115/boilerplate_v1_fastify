@@ -1,35 +1,24 @@
 export const createFieldObj = (fieldString: string) => {
-  //Bóc tách lấy các field cần
   let fieldHandle: any = {},
     selectObj: any;
   const fieldArr = fieldString.split(',').filter((item: string) => item !== '');
-  // ['author.slug','author.title'];
   for (const field of fieldArr) {
-    //author.slug.a, author.slug.b
     if (field.includes('.')) {
       const nestedFieldArr = field
         .split('.')
-        .filter((item: string) => item !== ''); //['author', 'slug', 'a']
+        .filter((item: string) => item !== '');
       selectObj = {
         ...selectObj,
         [nestedFieldArr[0]]: 1,
       };
-
-      const removeLastEl = nestedFieldArr.slice(0, -1).join('.'); //author.slug
-      const lastEl = nestedFieldArr.slice(-1).join(); //a
-      /*
-        {
-          'author': 'a b',
-          'author.category':'c d'
-        }
-      */
+      const removeLastEl = nestedFieldArr.slice(0, -1).join('.');
+      const lastEl = nestedFieldArr.slice(-1).join();
       if (!fieldHandle[removeLastEl])
-        //fieldHandle['author.slug']
         fieldHandle = {
           ...fieldHandle,
           [removeLastEl]: lastEl,
         };
-      else fieldHandle[removeLastEl] = fieldHandle[removeLastEl] + ' ' + lastEl; //'author.slug': 'a b'
+      else fieldHandle[removeLastEl] = fieldHandle[removeLastEl] + ' ' + lastEl;
     } else
       selectObj = {
         ...selectObj,
@@ -39,7 +28,7 @@ export const createFieldObj = (fieldString: string) => {
   let fieldSplit: any[] = [];
   for (const [key, value] of Object.entries(fieldHandle)) {
     //key: 'author.category' ---- value: 'c d'
-    const keySplit = key.split('.').filter((item: string) => item !== ''); //['author','category']
+    const keySplit = key.split('.').filter((item: string) => item !== '');
     let populateObj: any;
     type TPrev = {
       path?: string;

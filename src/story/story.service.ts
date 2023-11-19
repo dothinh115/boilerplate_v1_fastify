@@ -50,7 +50,6 @@ export class StoryService {
       select = selectObj;
       pathArr = fieldSplit;
     }
-
     if (query.filter) {
       filter = handleFilter(query.filter);
     }
