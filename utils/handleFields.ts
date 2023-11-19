@@ -1,4 +1,4 @@
-type TPrev = {
+type TPopulate = {
   path?: string;
   populate?: any;
   select?: string;
@@ -7,7 +7,7 @@ export const createFieldObj = (
   fieldString: string,
 ): {
   selectObj: any;
-  fieldSplit: TPrev[];
+  fieldSplit: TPopulate[];
 } => {
   let fieldHandle: any = {},
     selectObj: any;
@@ -38,13 +38,13 @@ export const createFieldObj = (
         [field]: 1,
       };
   }
-  let fieldSplit: TPrev[] = [];
+  let fieldSplit: TPopulate[] = [];
   for (const [key, value] of Object.entries(fieldHandle)) {
     const keySplit = key.split('.').filter((item: string) => item !== '');
-    let populateObj: TPrev;
+    let populateObj: TPopulate;
     if (keySplit.length > 1) {
       populateObj = keySplit.reduceRight(
-        (prev: TPrev, cur: string, index) => {
+        (prev: TPopulate, cur: string, index) => {
           return {
             path: cur,
             ...(index + 1 === keySplit.length
