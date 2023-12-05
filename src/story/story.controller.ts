@@ -13,6 +13,7 @@ import {
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
+import { TQuery } from 'model/query.model';
 
 @Controller('story')
 @UsePipes(new ValidationPipe())
@@ -28,17 +29,7 @@ export class StoryController {
   @Get()
   findAll(
     @Query()
-    query: {
-      fields: string;
-      filter: object;
-      limit: number;
-      page: number;
-      populate: string;
-      meta: {
-        total_count: boolean;
-        filter_count: boolean;
-      };
-    },
+    query: TQuery,
   ) {
     return this.storyService.find(query);
   }

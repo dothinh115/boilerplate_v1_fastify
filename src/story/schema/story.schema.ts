@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose,{ HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { Author } from 'src/author/schema/author.schema';
 import { Category } from 'src/category/schema/category.schema';
 export type StoryDocument = HydratedDocument<Story>;
@@ -20,4 +20,7 @@ export class Story {
   description: string;
 }
 
-export const StorySchema = SchemaFactory.createForClass(Story);
+export const StorySchema = SchemaFactory.createForClass(Story).set(
+  'versionKey',
+  false,
+);
