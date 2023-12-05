@@ -30,7 +30,7 @@ export class StoryService {
   }
 
   async find(query: TQuery) {
-    const result = handleQuery(this.storyModel, query);
+    const result = handleQuery<Story>(this.storyModel, query);
 
     return result;
   }

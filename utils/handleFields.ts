@@ -112,7 +112,7 @@ export const handleQuery = async <T>(model: Model<T>, query: TQuery) => {
     result = await model
       .find({ ...filterString }, { ...selectObj })
       .populate(fieldSplit)
-      .skip(+page - 1 * +limit)
+      .skip((+page - 1) * +limit)
       .limit(+limit)
       .lean();
     total_count = await model.find().count();
