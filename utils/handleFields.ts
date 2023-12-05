@@ -16,7 +16,6 @@ export const handleQuery = async <T>(model: Model<T>, query: TQuery) => {
     filterString: Object,
     total_count: number,
     filter_count: number;
-
   if (fields) {
     const fieldArr = fields.split(',').filter((item: string) => item !== '');
 
@@ -111,13 +110,13 @@ export const handleQuery = async <T>(model: Model<T>, query: TQuery) => {
 
   try {
     result = await model
-      .find({ ...filter }, { ...selectObj })
+      .find({ ...filterString }, { ...selectObj })
       .populate(fieldSplit)
       .skip(+page - 1 * +limit)
       .limit(+limit)
       .lean();
     total_count = await model.find().count();
-    filter_count = await model.find({ ...filter }).count();
+    filter_count = await model.find({ ...filterString }).count();
   } catch (error) {}
 
   return { data: result, meta: { total_count, filter_count } };
