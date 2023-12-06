@@ -3,7 +3,6 @@ import { CreateStoryDto } from './dto/create-story.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Story } from './schema/story.schema';
-import { handleFilter } from 'utils/handleFilter';
 import { toSlug } from 'utils/function';
 import { handleQuery } from 'utils/handleFields';
 import { TQuery } from 'model/query.model';

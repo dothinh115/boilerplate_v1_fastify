@@ -13,7 +13,7 @@ export const handleQuery = async <T>(model: Model<T>, query: TQuery) => {
     selectObj: any,
     fieldSplit: any[] = [],
     result: any[],
-    filterString: Object,
+    filterString: Object = {},
     total_count: number,
     filter_count: number;
   if (fields) {
