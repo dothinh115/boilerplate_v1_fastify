@@ -76,23 +76,7 @@ export const handleQuery = async <T>(model: Model<T>, query: TQuery) => {
       }
       fieldSplit = [...fieldSplit, populateObj];
     }
-    // for (const index in fieldSplit) {
-    //   const filterfieldSplit = fieldSplit.filter(
-    //     (item: { path: string }) => item.path === fieldSplit[index]?.path,
-    //   );
-    //   if (filterfieldSplit.length > 1) {
-    //     const newObj = {
-    //       ...fieldSplit[index],
-    //       ...filterfieldSplit[1],
-    //     };
-    //     fieldSplit = [
-    //       ...fieldSplit.filter(
-    //         (item: { path: string }) => item.path !== fieldSplit[index].path,
-    //       ),
-    //       { ...newObj },
-    //     ];
-    //   }
-    // }
+
     for (const field of fieldArr) {
       if (field === '*') {
         selectObj = undefined;
@@ -104,9 +88,7 @@ export const handleQuery = async <T>(model: Model<T>, query: TQuery) => {
     }
   }
 
-  if (filter) {
-    filterString = handleFilter(filter);
-  }
+  if (filter) filterString = handleFilter(filter);
 
   try {
     result = await model

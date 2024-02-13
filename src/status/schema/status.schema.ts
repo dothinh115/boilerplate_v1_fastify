@@ -1,17 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-export type AuthorDocument = HydratedDocument<Author>;
+
+export type StatusDocument = HydratedDocument<Status>;
 
 @Schema()
-export class Author {
+export class Status {
   @Prop({ required: true })
   _id: number;
   @Prop({ required: true })
-  name: string;
+  title: string;
   @Prop({ required: true })
   slug: string;
 }
 
-export const AuthorSchema = SchemaFactory.createForClass(Author)
+export const StatusSchema = SchemaFactory.createForClass(Status)
   .set('versionKey', false)
   .set('timestamps', true);

@@ -13,4 +13,6 @@ export class Category {
   slug: string;
 }
 
-export const CatgorySchema = SchemaFactory.createForClass(Category);
+export const CatgorySchema = SchemaFactory.createForClass(Category)
+  .set('versionKey', false)
+  .set('timestamps', true);

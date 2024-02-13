@@ -1,12 +1,11 @@
 import { Global, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { StoryModule } from './story/story.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthorModule } from './author/author.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { CategoryModule } from './category/category.module';
+import { StatusModule } from './status/status.module';
 
 @Global()
 @Module({
@@ -21,8 +20,7 @@ import { CategoryModule } from './category/category.module';
     AuthorModule,
     ChapterModule,
     CategoryModule,
+    StatusModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

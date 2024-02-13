@@ -26,6 +26,11 @@ export class StoryController {
     return this.storyService.create(payload);
   }
 
+  @Get('/abc')
+  abc() {
+    return this.storyService.abc();
+  }
+
   @Get()
   findAll(
     @Query()

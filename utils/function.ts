@@ -1,20 +1,40 @@
-export const toSlug = (text: string) =>
-  text
-    .toString()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-');
+import { Model } from 'mongoose';
 
-export const convertIdFromString = (object: object) => {
-  if (typeof object !== 'object') return;
-  for (const prop in object) {
-    try {
-      if (prop === 'id') object[prop] = Number(object[prop]);
-    } catch (error) {}
-    return convertIdFromString(object[prop]);
-  }
+export const toSlug = (str: string) => {
+  // Chuyển hết sang chữ thường
+  str = str.toLowerCase();
+
+  // xóa dấu
+  str = str
+    .normalize('NFD') // chuyển chuỗi sang unicode tổ hợp
+    .replace(/[\u0300-\u036f]/g, ''); // xóa các ký tự dấu sau khi tách tổ hợp
+
+  // Thay ký tự đĐ
+  str = str.replace(/[đĐ]/g, 'd');
+
+  // Xóa ký tự đặc biệt
+  str = str.replace(/([^0-9a-z-\s])/g, '');
+
+  // Xóa khoảng trắng thay bằng ký tự -
+  str = str.replace(/(\s+)/g, '-');
+
+  // Xóa ký tự - liên tiếp
+  str = str.replace(/-+/g, '-');
+
+  // xóa phần dư - ở đầu & cuối
+  str = str.replace(/^-+|-+$/g, '');
+
+  // return
+  return str;
 };
+
+export const getId = async <T>(model: Model<T>) => {
+  const lastRecord = await model.find().sort({ _id: -1 }).limit(1);
+  const _id = lastRecord.length === 0 ? 1 : +lastRecord[0]._id + 1;
+  return _id;
+};
+
+export const failResponse = (statusCode: number, message: string) => ({
+  statusCode,
+  message,
+});

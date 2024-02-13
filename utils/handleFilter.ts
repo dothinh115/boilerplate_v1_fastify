@@ -1,9 +1,17 @@
+import { toSlug } from './function';
+
 const numberRegex = new RegExp(/^\d+$/);
 
 export const handleFilter = (object: Object) => {
   let result: typeof object = {};
   for (const key in object) {
-    result[key] = stringToNumberObject(object[key]);
+    if (key === 'title' || key === 'name') {
+      result = {
+        slug: {
+          $regex: toSlug(object[key]),
+        },
+      };
+    } else result[key] = stringToNumberObject(object[key]);
   }
   return result;
 };

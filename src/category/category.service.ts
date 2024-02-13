@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category } from './schema/category.schema';
 import { toSlug } from 'utils/function';
+import axios from 'axios';
 
 @Injectable()
 export class CategoryService {

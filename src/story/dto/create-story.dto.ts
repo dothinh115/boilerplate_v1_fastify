@@ -15,8 +15,12 @@ export class CreateStoryDto {
   description: string;
 
   @Expose()
-  @IsNotEmpty({ message: 'Category không được để trống1' })
+  @IsNotEmpty({ message: 'Category không được để trống' })
   category: number[];
+
+  @Expose()
+  @IsNotEmpty({ message: 'Status không được để trống' })
+  status: number;
 
   static plainToClass<T>(this: new (...arg: any[]) => T, obj: T) {
     return plainToClass(this, obj, { excludeExtraneousValues: true });
