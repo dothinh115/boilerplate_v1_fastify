@@ -11,6 +11,8 @@ export class Category {
   title: string;
   @Prop({ required: true })
   slug: string;
+  @Prop()
+  sort?: number;
 }
 
 export const CatgorySchema = SchemaFactory.createForClass(Category)

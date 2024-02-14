@@ -25,6 +25,12 @@ export class Story {
   view: Number;
   @Prop({ default: null })
   cover: string | null;
+  @Prop({ default: 'Sưu tầm' })
+  source: string;
+  @Prop()
+  sort?: number;
+  @Prop()
+  story_code?: string;
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story)

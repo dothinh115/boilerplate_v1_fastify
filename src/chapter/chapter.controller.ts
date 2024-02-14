@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ChapterService } from './chapter.service';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
+import { TQuery } from 'model/query.model';
 
 @Controller('chapter')
 export class ChapterController {
@@ -13,8 +23,11 @@ export class ChapterController {
   }
 
   @Get()
-  findAll() {
-    return this.chapterService.findAll();
+  find(
+    @Query()
+    query: TQuery,
+  ) {
+    return this.chapterService.find(query);
   }
 
   @Get(':id')

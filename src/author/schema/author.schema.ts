@@ -10,6 +10,8 @@ export class Author {
   name: string;
   @Prop({ required: true })
   slug: string;
+  @Prop()
+  sort?: number;
 }
 
 export const AuthorSchema = SchemaFactory.createForClass(Author)

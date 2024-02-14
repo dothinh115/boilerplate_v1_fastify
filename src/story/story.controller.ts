@@ -31,8 +31,13 @@ export class StoryController {
     return this.storyService.abc();
   }
 
+  @Get('/xyz')
+  xyz() {
+    return this.storyService.xyz();
+  }
+
   @Get()
-  findAll(
+  find(
     @Query()
     query: TQuery,
   ) {

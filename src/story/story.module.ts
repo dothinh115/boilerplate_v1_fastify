@@ -6,6 +6,7 @@ import { Story, StorySchema } from './schema/story.schema';
 import { Author, AuthorSchema } from 'src/author/schema/author.schema';
 import { Status, StatusSchema } from 'src/status/schema/status.schema';
 import { Category, CatgorySchema } from 'src/category/schema/category.schema';
+import { Chapter, ChapterSchema } from 'src/chapter/schema/chapter.schema';
 @Global()
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { Category, CatgorySchema } from 'src/category/schema/category.schema';
       { name: Author.name, schema: AuthorSchema },
       { name: Status.name, schema: StatusSchema },
       { name: Category.name, schema: CatgorySchema },
+      { name: Chapter.name, schema: ChapterSchema },
     ]),
   ],
   controllers: [StoryController],

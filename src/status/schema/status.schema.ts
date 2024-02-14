@@ -11,6 +11,8 @@ export class Status {
   title: string;
   @Prop({ required: true })
   slug: string;
+  @Prop()
+  sort?: number;
 }
 
 export const StatusSchema = SchemaFactory.createForClass(Status)
