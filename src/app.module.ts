@@ -6,6 +6,9 @@ import { AuthorModule } from './author/author.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { CategoryModule } from './category/category.module';
 import { StatusModule } from './status/status.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { RoleModule } from './role/role.module';
 
 @Global()
 @Module({
@@ -21,6 +24,9 @@ import { StatusModule } from './status/status.module';
     ChapterModule,
     CategoryModule,
     StatusModule,
+    AuthModule,
+    UserModule,
+    RoleModule,
   ],
 })
 export class AppModule {}

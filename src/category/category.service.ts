@@ -4,7 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category } from './schema/category.schema';
-import { toSlug } from 'utils/function';
+import { getId, toSlug } from 'utils/function';
 import axios from 'axios';
 
 @Injectable()
@@ -16,12 +16,8 @@ export class CategoryService {
   async create(payload: CreateCategoryDto) {
     const { title } = payload;
     if (!title) return;
-    const lastRecord = await this.categoryModel
-      .find()
-      .sort({ _id: -1 })
-      .limit(1);
 
-    const _id = lastRecord.length === 0 ? 1 : (lastRecord[0]._id as number) + 1;
+    const _id = await getId(this.categoryModel);
     const data: Category = {
       _id,
       title,
@@ -45,5 +41,17 @@ export class CategoryService {
 
   remove(id: number) {
     return `This action removes a #${id} category`;
+  }
+
+  async abc() {
+    const fetchCategories = await axios(
+      'http://localhost:5500/api/categories/getAll',
+    );
+    const categories = fetchCategories.data.result;
+    for (const category of categories) {
+      await this.create({
+        title: category.cate_title,
+      });
+    }
   }
 }

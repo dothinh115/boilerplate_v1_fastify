@@ -116,7 +116,7 @@ export class StoryService {
   }
 
   async xyz() {
-    const totalStories = await this.storyModel.find().count();
+    const totalStories = await this.storyModel.find().countDocuments();
     const perPage = 50;
     let percentage = 0;
     let done = 0;
@@ -140,7 +140,7 @@ export class StoryService {
           .find({
             story: story._id,
           })
-          .count();
+          .countDocuments();
         if (totalChapter === totalChapterCheck) {
           done++;
           continue;

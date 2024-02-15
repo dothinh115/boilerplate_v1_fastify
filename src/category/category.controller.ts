@@ -24,6 +24,11 @@ export class CategoryController {
     return this.categoryService.create(payload);
   }
 
+  @Get('/abc')
+  abc() {
+    return this.categoryService.abc();
+  }
+
   @Get()
   findAll() {
     return this.categoryService.findAll();

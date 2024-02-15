@@ -24,6 +24,11 @@ export class AuthorController {
     return this.authorService.create(payload);
   }
 
+  @Get('/abc')
+  abc() {
+    return this.authorService.abc();
+  }
+
   @Get()
   findAll() {
     return this.authorService.findAll();
