@@ -9,6 +9,7 @@ import { StatusModule } from './status/status.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
+import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 
 @Global()
 @Module({
@@ -27,6 +28,7 @@ import { RoleModule } from './role/role.module';
     AuthModule,
     UserModule,
     RoleModule,
+    RefreshTokenModule,
   ],
 })
 export class AppModule {}

@@ -9,53 +9,54 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { TQuery } from 'model/query.model';
+import { TokenRequired } from 'src/strategy';
+import { RolesGuard } from 'src/guard/roles.guard';
+import { Roles } from 'src/guard/roles.decorator';
+import roles from 'utils/roles';
 
 @Controller('story')
 @UsePipes(new ValidationPipe())
 export class StoryController {
   constructor(private readonly storyService: StoryService) {}
 
+  @UseGuards(TokenRequired, RolesGuard)
+  @Roles(roles.admin)
   @Post()
   create(@Body() payload: CreateStoryDto) {
     payload = CreateStoryDto.plainToClass(payload);
     return this.storyService.create(payload);
   }
 
-  @Get('/abc')
-  abc() {
-    return this.storyService.abc();
-  }
+  // @Get('/abc')
+  // abc() {
+  //   return this.storyService.abc();
+  // }
 
-  @Get('/xyz')
-  xyz() {
-    return this.storyService.xyz();
-  }
+  // @Get('/xyz')
+  // xyz() {
+  //   return this.storyService.xyz();
+  // }
 
   @Get()
-  find(
-    @Query()
-    query: TQuery,
-  ) {
+  find(@Query() query: TQuery) {
     return this.storyService.find(query);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.storyService.findOne(+id);
-  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateStoryDto: UpdateStoryDto) {
   //   return this.storyService.update(+id, updateStoryDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.storyService.remove(+id);
-  // }
+  @UseGuards(TokenRequired, RolesGuard)
+  @Roles(roles.admin)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.storyService.remove(+id);
+  }
 }

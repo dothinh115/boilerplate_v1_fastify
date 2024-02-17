@@ -4,11 +4,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
-import { failResponse } from 'utils/function';
 import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { TQuery } from 'model/query.model';
 import { handleQuery } from 'utils/handleFields';
+import { failResponse, successResponse } from 'utils/response';
 
 @Injectable()
 export class UserService {
@@ -21,7 +21,7 @@ export class UserService {
     const dupCheck = await this.userModel.findOne({
       email,
     });
-    if (dupCheck) return failResponse(400, 'Email đã được dùng!');
+    if (dupCheck) return failResponse('Email đã được dùng!');
     const data = {
       email,
       password: bcrypt.hashSync(
@@ -29,8 +29,9 @@ export class UserService {
         Number(this.configService.get('BCRYPT_LOOPS')),
       ),
     };
-    const result = await this.userModel.create(data);
-    return await handleQuery(this.userModel, query, result._id);
+    const create = await this.userModel.create(data);
+    const result = await handleQuery(this.userModel, query, create._id);
+    return successResponse(result);
   }
 
   findAll() {

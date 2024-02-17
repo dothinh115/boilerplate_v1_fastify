@@ -34,7 +34,15 @@ export const getId = async <T>(model: Model<T>) => {
   return _id;
 };
 
-export const failResponse = (statusCode: number, message: string) => ({
-  statusCode,
-  message,
-});
+export const customDate = (date: Date): Date => {
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds(),
+    ),
+  );
+};

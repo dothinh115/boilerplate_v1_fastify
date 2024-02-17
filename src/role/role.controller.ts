@@ -8,10 +8,12 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { TQuery } from 'model/query.model';
 
 @UsePipes(new ValidationPipe())
 @Controller('role')
@@ -19,9 +21,9 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  create(@Body() payload: CreateRoleDto) {
-    payload = CreateRoleDto.plainToClass(payload);
-    return this.roleService.create(payload);
+  create(@Body() body: CreateRoleDto, @Query() query: TQuery) {
+    body = CreateRoleDto.plainToClass(body);
+    return this.roleService.create(body, query);
   }
 
   @Get()

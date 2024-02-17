@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Role } from 'src/role/schema/role.schema';
+import roles from 'utils/roles';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, lowercase: true })
   email: string;
   @Prop({ required: true, select: false })
   password: string;
@@ -14,11 +15,11 @@ export class User {
   actived: boolean;
   @Prop({
     required: true,
-    default: '65ce5210c804ac46883c8729',
+    default: roles.member,
     type: mongoose.Schema.Types.String,
     ref: 'Role',
   })
-  role: Role;
+  role: Role | string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

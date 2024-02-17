@@ -6,6 +6,9 @@ import { Model } from 'mongoose';
 import { Author } from './schema/author.schema';
 import { getId, toSlug } from 'utils/function';
 import axios from 'axios';
+import { failResponse, successResponse } from 'utils/response';
+import { TQuery } from 'model/query.model';
+import { handleQuery } from 'utils/handleFields';
 
 @Injectable()
 export class AuthorService {
@@ -31,50 +34,51 @@ export class AuthorService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all author`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} author`;
+  async find(query: TQuery) {
+    return await handleQuery(this.authorModel, query);
   }
 
   update(id: number, updateAuthorDto: UpdateAuthorDto) {
     return `This action updates a #${id} author`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} author`;
+  async remove(id: number) {
+    const find = await this.authorModel.findById(id);
+    if (!find) return failResponse('Không tìm thấy user này!');
+    await this.authorModel.findByIdAndDelete(id);
+    return successResponse({
+      message: 'Thành công!',
+    });
   }
 
-  async abc() {
-    const fetchTotalStories = await axios.get(
-      'http://localhost:5500/api/stories/getNumber',
-    );
-    const totalStories = fetchTotalStories.data.number;
-    const perPage = 50;
-    const totalPages = Math.floor(totalStories / perPage) + 1;
-    let percentage = 0;
-    let done = 0;
-    for (let page = 1; page <= totalPages; page++) {
-      const getAll = await axios.get(
-        `http://localhost:5500/api/stories/getAll?limit=${perPage}&page=${page}`,
-      );
-      const dataArr = getAll.data.result;
-      for (const story of dataArr) {
-        const author: string = story.story_author;
+  // async abc() {
+  //   const fetchTotalStories = await axios.get(
+  //     'http://localhost:5500/api/stories/getNumber',
+  //   );
+  //   const totalStories = fetchTotalStories.data.number;
+  //   const perPage = 50;
+  //   const totalPages = Math.floor(totalStories / perPage) + 1;
+  //   let percentage = 0;
+  //   let done = 0;
+  //   for (let page = 1; page <= totalPages; page++) {
+  //     const getAll = await axios.get(
+  //       `http://localhost:5500/api/stories/getAll?limit=${perPage}&page=${page}`,
+  //     );
+  //     const dataArr = getAll.data.result;
+  //     for (const story of dataArr) {
+  //       const author: string = story.story_author;
 
-        done++;
-        percentage = Math.round(done / totalStories) * 100;
-        console.log(
-          `Đã hoàn thành ${percentage}% (${done}/${totalStories}). Tác giả: ${author}, slug: ${toSlug(
-            author,
-          )}`,
-        );
-        await this.create({
-          name: author,
-        });
-      }
-    }
-  }
+  //       done++;
+  //       percentage = Math.round(done / totalStories) * 100;
+  //       console.log(
+  //         `Đã hoàn thành ${percentage}% (${done}/${totalStories}). Tác giả: ${author}, slug: ${toSlug(
+  //           author,
+  //         )}`,
+  //       );
+  //       await this.create({
+  //         name: author,
+  //       });
+  //     }
+  //   }
+  // }
 }
