@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
-import { TQuery } from 'model/query.model';
-import { handleQuery } from 'utils/handleFields';
+import { TQuery } from 'utils/model/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Chapter } from './schema/chapter.schema';
 import { Model } from 'mongoose';
+import { handleQuery } from 'utils/query/handleQuery';
 
 @Injectable()
 export class ChapterService {
@@ -17,7 +17,7 @@ export class ChapterService {
   }
 
   async find(query: TQuery) {
-    const result = handleQuery<Chapter>(this.chapterModel, query);
+    const result = handleQuery(this.chapterModel, query);
 
     return result;
   }

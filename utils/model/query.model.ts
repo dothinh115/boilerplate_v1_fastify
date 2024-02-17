@@ -5,3 +5,9 @@ export type TQuery = {
   page: string;
   meta: string;
 };
+
+export type TPopulate = {
+  path?: string;
+  populate?: any;
+  select?: string;
+};

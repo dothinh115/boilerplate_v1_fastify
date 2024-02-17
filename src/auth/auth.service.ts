@@ -6,7 +6,7 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { failResponse, successResponse } from 'utils/response';
-import { RefreshToken } from 'src/refresh-token/schema/refreshToken.schema';
+import { RefreshToken } from 'src/auth/dto/refresh-token.schema';
 @Injectable()
 export class AuthService {
   constructor(

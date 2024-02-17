@@ -4,7 +4,7 @@ import { StoryController } from './story.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Story, StorySchema } from './schema/story.schema';
 import { Author, AuthorSchema } from 'src/author/schema/author.schema';
-import { Status, StatusSchema } from 'src/status/schema/status.schema';
+import { Status, StatusSchema } from 'src/story/schema/status.schema';
 import { Category, CatgorySchema } from 'src/category/schema/category.schema';
 import { Chapter, ChapterSchema } from 'src/chapter/schema/chapter.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';

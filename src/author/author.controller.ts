@@ -18,7 +18,7 @@ import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { Roles } from 'src/guard/roles.decorator';
 import roles from 'utils/roles';
-import { TQuery } from 'model/query.model';
+import { TQuery } from 'utils/model/query.model';
 
 @Controller('author')
 @UsePipes(new ValidationPipe())
@@ -28,24 +28,25 @@ export class AuthorController {
   @UseGuards(TokenRequired, RolesGuard)
   @Roles(roles.admin)
   @Post()
-  create(@Body() payload: CreateAuthorDto) {
-    payload = CreateAuthorDto.plainToClass(payload);
-    return this.authorService.create(payload);
+  create(@Body() body: CreateAuthorDto) {
+    body = CreateAuthorDto.plainToClass(body);
+    return this.authorService.create(body);
   }
-
-  // @Get('/abc')
-  // abc() {
-  //   return this.authorService.abc();
-  // }
 
   @Get()
   find(@Query() query: TQuery) {
     return this.authorService.find(query);
   }
 
+  @UseGuards(TokenRequired, RolesGuard)
+  @Roles(roles.admin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
-    return this.authorService.update(+id, updateAuthorDto);
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateAuthorDto,
+    @Query() query: TQuery,
+  ) {
+    return this.authorService.update(+id, body, query);
   }
 
   @UseGuards(TokenRequired, RolesGuard)

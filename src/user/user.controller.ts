@@ -13,7 +13,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TQuery } from 'model/query.model';
+import { TQuery } from 'utils/model/query.model';
 
 @UsePipes(new ValidationPipe())
 @Controller('user')

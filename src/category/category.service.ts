@@ -5,12 +5,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category } from './schema/category.schema';
 import { getId, toSlug } from 'utils/function';
-import axios from 'axios';
+import { TQuery } from 'utils/model/query.model';
+import { failResponse, successResponse } from 'utils/response';
+import { Story } from 'src/story/schema/story.schema';
+import { handleQuery } from 'utils/query/handleQuery';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
+    @InjectModel(Story.name) private storyModel: Model<Story>,
   ) {}
 
   async create(payload: CreateCategoryDto) {
@@ -27,31 +31,36 @@ export class CategoryService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async find(query: TQuery) {
+    return await handleQuery(this.categoryModel, query);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async update(id: number, body: UpdateCategoryDto, query: TQuery) {
+    const existCheck = await this.categoryModel.findById(id);
+    if (!existCheck) return failResponse('Không tồn tại thể loại này!');
+    await this.categoryModel.findByIdAndUpdate(id, {
+      ...body,
+      slug: toSlug(body.title),
+    });
+    const result = await handleQuery(this.categoryModel, query, id);
+    return result;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} category`;
-  }
-
-  async abc() {
-    const fetchCategories = await axios(
-      'http://localhost:5500/api/categories/getAll',
-    );
-    const categories = fetchCategories.data.result;
-    for (const category of categories) {
-      await this.create({
-        title: category.cate_title,
-      });
-    }
+  async remove(id: number) {
+    const existCheck = await this.categoryModel.findById(id);
+    if (!existCheck) return failResponse('Không tồn tại thể loại này!');
+    const storyCheck = await this.storyModel.findOne({
+      category: {
+        $in: id,
+      },
+    });
+    if (storyCheck)
+      return failResponse(
+        'Không thể xoá thể loại này vì có thể còn tồn tại ở truyện nào đó!',
+      );
+    await this.categoryModel.findByIdAndDelete(id);
+    return successResponse({
+      message: 'Thành công!',
+    });
   }
 }

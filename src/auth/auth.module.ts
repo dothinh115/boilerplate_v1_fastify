@@ -9,7 +9,7 @@ import { JwtStrategy } from 'src/strategy/jwt.strategy';
 import {
   RefreshToken,
   RefreshTokenSchema,
-} from 'src/refresh-token/schema/refreshToken.schema';
+} from 'src/auth/dto/refresh-token.schema';
 
 @Module({
   imports: [

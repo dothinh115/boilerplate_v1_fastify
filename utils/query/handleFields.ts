@@ -1,26 +1,10 @@
-import { Model } from 'mongoose';
-import { handleFilter } from './handleFilter';
-import { TQuery } from 'model/query.model';
+import { TPopulate } from 'utils/model/query.model';
 
-type TPopulate = {
-  path?: string;
-  populate?: any;
-  select?: string;
-};
-export const handleQuery = async <T>(
-  model: Model<T>,
-  query: TQuery,
-  _id?: any,
-) => {
-  const { fields, filter, page, limit, meta } = query;
+export const handleField = (fields: string) => {
   let fieldHandle: any = {},
     selectObj: any,
-    fieldSplit: any[] = [],
-    result: any[],
-    filterString: Object = {},
-    total_count: number,
-    filter_count: number,
-    metaSelect: string[] = [];
+    fieldSplit: any[] = [];
+
   if (fields) {
     const fieldArr = fields.split(',').filter((item: string) => item !== '');
 
@@ -79,60 +63,36 @@ export const handleQuery = async <T>(
           }),
         };
       }
-      fieldSplit = [...fieldSplit, populateObj];
-    }
 
+      let exist = false;
+      //kiểm tra path đã tồn tại trong mảng chưa, nếu rồi thì phải merge các object cùng path với nhau
+      for (let index in fieldSplit) {
+        if (fieldSplit[index]['path'] === populateObj['path']) {
+          const merge = {
+            ...fieldSplit[index],
+            ...populateObj,
+          };
+          fieldSplit[index] = merge;
+          exist = true; //nếu đã có path tồn tại thì ko thêm mới vào mảng nữa
+          break;
+        }
+      }
+      //trong trường hợp có path mới thì thêm vào mảng
+      if (!exist) fieldSplit = [...fieldSplit, populateObj];
+    }
     for (const field of fieldArr) {
       if (field === '*') {
         selectObj = undefined;
         break;
       }
     }
+
     for (const item of fieldSplit) {
       if (item['select']?.includes('*')) delete item['select'];
     }
   }
-
-  if (filter) filterString = handleFilter(filter);
-  if (meta) metaSelect = meta.split(',').filter((meta: string) => meta !== '');
-
-  try {
-    if (_id)
-      result = await model.findById(_id, { ...selectObj }).populate(fieldSplit);
-    else
-      result = await model
-        .find({ ...filterString }, { ...selectObj })
-        .populate(fieldSplit)
-        .skip((+page - 1) * +limit)
-        .limit(+limit)
-        .lean();
-    for (const meta of metaSelect) {
-      if (meta === '*') {
-        total_count = await model.find().countDocuments();
-        filter_count = await model.find({ ...filterString }).countDocuments();
-        break;
-      }
-      if (meta === 'total_count')
-        total_count = await model.find().countDocuments();
-      if (meta === 'filter_count')
-        filter_count = await model.find({ ...filterString }).countDocuments();
-    }
-  } catch (error) {}
-
-  const data = {
-    data: result,
+  return {
+    populate: fieldSplit,
+    select: selectObj,
   };
-  for (const meta of metaSelect) {
-    if (meta === '*') {
-      data['meta'] = {
-        total_count,
-        filter_count,
-      };
-      break;
-    }
-    if (meta === 'total_count') data['meta'] = { total_count };
-    if (meta === 'filter_count') data['meta'] = { filter_count };
-  }
-
-  return data;
 };

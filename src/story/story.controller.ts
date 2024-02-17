@@ -14,7 +14,7 @@ import {
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { TQuery } from 'model/query.model';
+import { TQuery } from 'utils/model/query.model';
 import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { Roles } from 'src/guard/roles.decorator';
@@ -28,30 +28,26 @@ export class StoryController {
   @UseGuards(TokenRequired, RolesGuard)
   @Roles(roles.admin)
   @Post()
-  create(@Body() payload: CreateStoryDto) {
-    payload = CreateStoryDto.plainToClass(payload);
-    return this.storyService.create(payload);
+  create(@Body() body: CreateStoryDto) {
+    body = CreateStoryDto.plainToClass(body);
+    return this.storyService.create(body);
   }
-
-  // @Get('/abc')
-  // abc() {
-  //   return this.storyService.abc();
-  // }
-
-  // @Get('/xyz')
-  // xyz() {
-  //   return this.storyService.xyz();
-  // }
 
   @Get()
   find(@Query() query: TQuery) {
     return this.storyService.find(query);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateStoryDto: UpdateStoryDto) {
-  //   return this.storyService.update(+id, updateStoryDto);
-  // }
+  @UseGuards(TokenRequired, RolesGuard)
+  @Roles(roles.admin)
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateStoryDto,
+    @Query() query: TQuery,
+  ) {
+    return this.storyService.update(+id, body, query);
+  }
 
   @UseGuards(TokenRequired, RolesGuard)
   @Roles(roles.admin)

@@ -5,9 +5,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
 import { toSlug } from 'utils/function';
-import { handleQuery } from 'utils/handleFields';
-import { TQuery } from 'model/query.model';
-import { failResponse } from 'utils/response';
+import { TQuery } from 'utils/model/query.model';
+import { failResponse, successResponse } from 'utils/response';
+import { handleQuery } from 'utils/query/handleQuery';
+import roles from 'utils/roles';
 
 @Injectable()
 export class RoleService {
@@ -26,19 +27,26 @@ export class RoleService {
     return await handleQuery(this.roleModel, query, result._id);
   }
 
-  findAll() {
-    return `This action returns all role`;
+  async find(query: TQuery) {
+    return await handleQuery(this.roleModel, query);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async update(id: string, body: UpdateRoleDto, query: TQuery) {
+    const existCheck = await this.roleModel.findById(id);
+    if (!existCheck) return failResponse('Không tồn tại role này!');
+    await this.roleModel.findByIdAndUpdate(id, body);
+    return await handleQuery(this.roleModel, query, id);
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: string) {
+    const existCheck = await this.roleModel.findById(id);
+    if (!existCheck) return failResponse('Không tồn tại role này!');
+    for (const index in roles) {
+      if (id === roles[index]) return failResponse('Không thể xoá role này!');
+    }
+    await this.roleModel.findByIdAndDelete(id);
+    return successResponse({
+      message: 'Thành công!',
+    });
   }
 }

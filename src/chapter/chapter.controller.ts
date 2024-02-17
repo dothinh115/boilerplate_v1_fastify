@@ -11,7 +11,7 @@ import {
 import { ChapterService } from './chapter.service';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
-import { TQuery } from 'model/query.model';
+import { TQuery } from 'utils/model/query.model';
 
 @Controller('chapter')
 export class ChapterController {

@@ -6,9 +6,9 @@ import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { TQuery } from 'model/query.model';
-import { handleQuery } from 'utils/handleFields';
+import { TQuery } from 'utils/model/query.model';
 import { failResponse, successResponse } from 'utils/response';
+import { handleQuery } from 'utils/query/handleQuery';
 
 @Injectable()
 export class UserService {
