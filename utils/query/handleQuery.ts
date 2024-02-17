@@ -21,6 +21,7 @@ export const handleQuery = async <T>(
     selectObj = handleField(fields).select;
   }
   if (filter) filterString = handleFilter(filter);
+  console.log(filterString);
   if (meta) metaSelect = meta.split(',').filter((meta: string) => meta !== '');
 
   try {

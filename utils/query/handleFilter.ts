@@ -18,14 +18,17 @@ export const handleFilter = (object: Object) => {
     //trong trường hợp tìm kiếm bằng title hoặc name thì đưa về slug để tìm
     if (key === 'title' || key === 'name') {
       for (const compareKey in object[key]) {
-        return (result = {
+        return {
           slug: {
             //compare key sử dụng quy tắc của mongodb, ví dụ như $eq, $in, $regex...
             [compareKey]: toSlug(object[key][compareKey]),
           },
-        });
+        };
       }
-    } else return (result[key] = stringToNumberObject(object[key]));
+    } else
+      return {
+        [key]: stringToNumberObject(object[key]),
+      };
   }
 };
 //hàm đưa giá trị cuối cùng của object về thành number nếu nó thực sự là number

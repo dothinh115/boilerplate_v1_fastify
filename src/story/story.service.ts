@@ -14,8 +14,7 @@ export class StoryService {
   constructor(@InjectModel(Story.name) private storyModel: Model<Story>) {}
 
   async create(payload: CreateStoryDto) {
-    const { title, category, description, author, status, source, story_code } =
-      payload;
+    const { title, author } = payload;
     const dupCheck = await this.storyModel.findOne({
       title,
       author,
@@ -24,14 +23,8 @@ export class StoryService {
     const _id = await getId(this.storyModel);
     const data = {
       _id,
-      title,
-      author,
-      category,
-      description,
-      status,
+      ...payload,
       slug: toSlug(title),
-      source,
-      story_code,
     };
     const result = await this.storyModel.create(data);
     return result;
