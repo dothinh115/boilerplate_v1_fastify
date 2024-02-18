@@ -12,6 +12,7 @@ import { ConvertModule } from './convert/convert.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
 import { ResponseModule } from './response/response.module';
+import { MeModule } from './me/me.module';
 
 @Global()
 @Module({
@@ -33,6 +34,7 @@ import { ResponseModule } from './response/response.module';
     CommonModule,
     QueryModule,
     ResponseModule,
+    MeModule,
   ],
 })
 export class AppModule {}

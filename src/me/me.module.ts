@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { MeService } from './me.service';
+import { MeController } from './me.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './schema/user.schema';
-import { ConfigModule } from '@nestjs/config';
+import { User, UserSchema } from 'src/user/schema/user.schema';
 import { QueryModule } from 'src/query/query.module';
 import { ResponseModule } from 'src/response/response.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -15,12 +15,11 @@ import { ResponseModule } from 'src/response/response.module';
         schema: UserSchema,
       },
     ]),
-    ConfigModule,
     QueryModule,
     ResponseModule,
+    UserModule,
   ],
-  controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  controllers: [MeController],
+  providers: [MeService],
 })
-export class UserModule {}
+export class MeModule {}
