@@ -28,9 +28,9 @@ export class AuthorController {
   @UseGuards(TokenRequired, RolesGuard)
   @Roles(roles.admin)
   @Post()
-  create(@Body() body: CreateAuthorDto) {
+  create(@Body() body: CreateAuthorDto, @Query() query: TQuery) {
     body = CreateAuthorDto.plainToClass(body);
-    return this.authorService.create(body);
+    return this.authorService.create(body, query);
   }
 
   @Get()

@@ -18,8 +18,8 @@ export class AuthorService {
     private responseService: ResponseService,
   ) {}
 
-  async create(payload: CreateAuthorDto) {
-    const { name } = payload;
+  async create(body: CreateAuthorDto, query: TQuery) {
+    const { name } = body;
     if (!name) return;
     //kiểm tra trùng lặp
     const dupCheck = await this.authorModel.findOne({
@@ -34,12 +34,18 @@ export class AuthorService {
       name,
       slug: this.commonService.toSlug(name) || name,
     };
-    const result = await this.authorModel.create(data);
-    return result;
+    await this.authorModel.create(data);
+    const result = await this.queryService.handleQuery(
+      this.authorModel,
+      query,
+      _id,
+    );
+    return this.responseService.successResponse(result);
   }
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.authorModel, query);
+    const result = await this.queryService.handleQuery(this.authorModel, query);
+    return this.responseService.successResponse(result);
   }
 
   async update(id: number, body: UpdateAuthorDto, query: TQuery) {
@@ -56,13 +62,13 @@ export class AuthorService {
       query,
       id,
     );
-    return result;
+    return this.responseService.successResponse(result);
   }
 
   async remove(id: number) {
     const find = await this.authorModel.findById(id);
     if (!find)
-      return this.responseService.failResponse('Không tìm thấy user này!');
+      return this.responseService.failResponse('Không tìm thấy tác giả này!');
     await this.authorModel.findByIdAndDelete(id);
     return this.responseService.successResponse('Thành công!');
   }

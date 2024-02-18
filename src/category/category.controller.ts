@@ -28,9 +28,9 @@ export class CategoryController {
   @UseGuards(TokenRequired, RolesGuard)
   @Roles(roles.admin)
   @Post()
-  create(@Body() payload: CreateCategoryDto) {
-    payload = CreateCategoryDto.plainToClass(payload);
-    return this.categoryService.create(payload);
+  create(@Body() body: CreateCategoryDto, @Query() query: TQuery) {
+    body = CreateCategoryDto.plainToClass(body);
+    return this.categoryService.create(body, query);
   }
 
   @Get()

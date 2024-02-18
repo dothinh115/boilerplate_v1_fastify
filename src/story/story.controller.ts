@@ -28,9 +28,9 @@ export class StoryController {
   @UseGuards(TokenRequired, RolesGuard)
   @Roles(roles.admin)
   @Post()
-  create(@Body() body: CreateStoryDto) {
+  create(@Body() body: CreateStoryDto, @Query() query: TQuery) {
     body = CreateStoryDto.plainToClass(body);
-    return this.storyService.create(body);
+    return this.storyService.create(body, query);
   }
 
   @Get()

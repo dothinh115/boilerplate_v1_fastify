@@ -29,16 +29,18 @@ export class RoleService {
       title,
       slug: this.commonService.toSlug(title),
     };
-    const result = await this.roleModel.create(data);
-    return await this.queryService.handleQuery(
+    const create = await this.roleModel.create(data);
+    const result = await this.queryService.handleQuery(
       this.roleModel,
       query,
-      result._id,
+      create._id,
     );
+    return this.responseService.successResponse(result);
   }
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.roleModel, query);
+    const result = await this.queryService.handleQuery(this.roleModel, query);
+    return this.responseService.successResponse(result);
   }
 
   async update(id: string, body: UpdateRoleDto, query: TQuery) {
@@ -46,7 +48,12 @@ export class RoleService {
     if (!existCheck)
       return this.responseService.failResponse('Không tồn tại role này!');
     await this.roleModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(this.roleModel, query, id);
+    const result = await this.queryService.handleQuery(
+      this.roleModel,
+      query,
+      id,
+    );
+    return this.responseService.successResponse(result);
   }
 
   async remove(id: string) {

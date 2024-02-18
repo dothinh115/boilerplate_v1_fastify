@@ -18,7 +18,7 @@ export class StoryService {
     private responseService: ResponseService,
   ) {}
 
-  async create(body: CreateStoryDto) {
+  async create(body: CreateStoryDto, query: TQuery) {
     const { title, author } = body;
     const dupCheck = await this.storyModel.findOne({
       title,
@@ -32,13 +32,18 @@ export class StoryService {
       ...body,
       slug: this.commonService.toSlug(title),
     };
-    const result = await this.storyModel.create(data);
-    return result;
+    await this.storyModel.create(data);
+    const result = await this.queryService.handleQuery(
+      this.storyModel,
+      query,
+      _id,
+    );
+    return this.responseService.successResponse(result);
   }
 
   async find(query: TQuery) {
     const result = this.queryService.handleQuery(this.storyModel, query);
-    return result;
+    return this.responseService.successResponse(result);
   }
 
   async update(id: number, body: UpdateStoryDto, query: TQuery) {
@@ -56,7 +61,7 @@ export class StoryService {
       query,
       id,
     );
-    return result;
+    return this.responseService.successResponse(result);
   }
 
   async remove(id: number) {

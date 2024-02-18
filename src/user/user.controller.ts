@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -34,21 +35,25 @@ export class UserController {
   }
 
   @Get()
-  find() {
-    return this.userService.find();
+  find(@Query() query: TQuery) {
+    return this.userService.find(query);
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin)
+  @Roles(roles.admin, roles.self)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Query() query: TQuery,
+  ) {
+    return this.userService.update(id, updateUserDto, query);
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin)
+  @Roles(roles.admin, roles.self)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+    return this.userService.remove(id);
   }
 }

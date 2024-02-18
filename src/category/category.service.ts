@@ -20,8 +20,8 @@ export class CategoryService {
     private responseService: ResponseService,
   ) {}
 
-  async create(payload: CreateCategoryDto) {
-    const { title } = payload;
+  async create(body: CreateCategoryDto, query: TQuery) {
+    const { title } = body;
     if (!title) return;
 
     const _id = await this.commonService.getId(this.categoryModel);
@@ -30,12 +30,21 @@ export class CategoryService {
       title,
       slug: this.commonService.toSlug(title),
     };
-    const result = await this.categoryModel.create(data);
-    return result;
+    await this.categoryModel.create(data);
+    const result = await this.queryService.handleQuery(
+      this.categoryModel,
+      query,
+      _id,
+    );
+    return this.responseService.successResponse(result);
   }
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.categoryModel, query);
+    const result = await this.queryService.handleQuery(
+      this.categoryModel,
+      query,
+    );
+    return this.responseService.successResponse(result);
   }
 
   async update(id: number, body: UpdateCategoryDto, query: TQuery) {
@@ -51,7 +60,7 @@ export class CategoryService {
       query,
       id,
     );
-    return result;
+    return this.responseService.successResponse(result);
   }
 
   async remove(id: number) {

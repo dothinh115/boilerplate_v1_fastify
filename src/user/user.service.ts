@@ -18,8 +18,8 @@ export class UserService {
     private queryService: QueryService,
     private responseService: ResponseService,
   ) {}
-  async create(payload: CreateUserDto, query: TQuery) {
-    const { email, password } = payload;
+  async create(body: CreateUserDto, query: TQuery) {
+    const { email, password } = body;
     const dupCheck = await this.userModel.findOne({
       email,
     });
@@ -41,15 +41,38 @@ export class UserService {
     return this.responseService.successResponse(result);
   }
 
-  find() {
-    return `This action returns all user`;
+  async find(query: TQuery) {
+    const result = await this.queryService.handleQuery(this.userModel, query);
+    return this.responseService.successResponse(result);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, body: UpdateUserDto, query: TQuery) {
+    const { email, password } = body;
+
+    const existCheck = await this.userModel.findById(id);
+    if (!existCheck)
+      return this.responseService.failResponse('Không tồn tại user này!');
+    //tạm thời không cho đổi mail
+
+    await this.userModel.findByIdAndUpdate(id, {
+      password: bcrypt.hashSync(
+        password,
+        Number(this.configService.get('BCRYPT_LOOPS')),
+      ),
+    });
+    const result = await this.queryService.handleQuery(
+      this.userModel,
+      query,
+      id,
+    );
+    return this.responseService.successResponse(result);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const existCheck = await this.userModel.findById(id);
+    if (!existCheck)
+      return this.responseService.failResponse('Không tồn tại user này!');
+    await this.userModel.findByIdAndDelete(id);
+    return this.responseService.successResponse('Thành công!');
   }
 }
