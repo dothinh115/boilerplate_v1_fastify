@@ -13,6 +13,7 @@ import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
 import { ResponseModule } from './response/response.module';
 import { MeModule } from './me/me.module';
+import { MailModule } from './mail/mail.module';
 
 @Global()
 @Module({
@@ -35,6 +36,7 @@ import { MeModule } from './me/me.module';
     QueryModule,
     ResponseModule,
     MeModule,
+    MailModule,
   ],
 })
 export class AppModule {}
