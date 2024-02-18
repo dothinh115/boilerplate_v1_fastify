@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CommonService } from 'src/common/common.service';
-import { TPopulate, TQuery, numberRegex } from 'utils/model/query.model';
+import { numberRegex } from 'utils/model/common.model';
+import { TPopulate, TQuery } from 'utils/model/query.model';
 
 @Injectable()
 export class QueryService {
