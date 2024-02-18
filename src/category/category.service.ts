@@ -5,10 +5,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category } from './schema/category.schema';
 import { TQuery } from 'utils/model/query.model';
-import { failResponse, successResponse } from 'utils/response';
 import { Story } from 'src/story/schema/story.schema';
 import { QueryService } from 'src/query/query.service';
 import { CommonService } from 'src/common/common.service';
+import { ResponseService } from 'src/response/response.service';
 
 @Injectable()
 export class CategoryService {
@@ -17,6 +17,7 @@ export class CategoryService {
     @InjectModel(Story.name) private storyModel: Model<Story>,
     private queryService: QueryService,
     private commonService: CommonService,
+    private responseService: ResponseService,
   ) {}
 
   async create(payload: CreateCategoryDto) {
@@ -39,7 +40,8 @@ export class CategoryService {
 
   async update(id: number, body: UpdateCategoryDto, query: TQuery) {
     const existCheck = await this.categoryModel.findById(id);
-    if (!existCheck) return failResponse('Không tồn tại thể loại này!');
+    if (!existCheck)
+      return this.responseService.failResponse('Không tồn tại thể loại này!');
     await this.categoryModel.findByIdAndUpdate(id, {
       ...body,
       slug: this.commonService.toSlug(body.title),
@@ -54,19 +56,18 @@ export class CategoryService {
 
   async remove(id: number) {
     const existCheck = await this.categoryModel.findById(id);
-    if (!existCheck) return failResponse('Không tồn tại thể loại này!');
+    if (!existCheck)
+      return this.responseService.failResponse('Không tồn tại thể loại này!');
     const storyCheck = await this.storyModel.findOne({
       category: {
         $in: id,
       },
     });
     if (storyCheck)
-      return failResponse(
+      return this.responseService.failResponse(
         'Không thể xoá thể loại này vì có thể còn tồn tại ở truyện nào đó!',
       );
     await this.categoryModel.findByIdAndDelete(id);
-    return successResponse({
-      message: 'Thành công!',
-    });
+    return this.responseService.successResponse('Thành công!');
   }
 }

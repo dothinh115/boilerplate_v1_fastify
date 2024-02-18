@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schema/user.schema';
 import { ConfigModule } from '@nestjs/config';
 import { QueryModule } from 'src/query/query.module';
+import { ResponseModule } from 'src/response/response.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { QueryModule } from 'src/query/query.module';
     ]),
     ConfigModule,
     QueryModule,
+    ResponseModule,
   ],
   controllers: [UserController],
   providers: [UserService],

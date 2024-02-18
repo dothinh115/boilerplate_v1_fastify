@@ -5,8 +5,8 @@ import { User } from 'src/user/schema/user.schema';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { failResponse, successResponse } from 'utils/response';
 import { RefreshToken } from 'src/auth/dto/refresh-token.schema';
+import { ResponseService } from 'src/response/response.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -14,6 +14,7 @@ export class AuthService {
     @InjectModel(RefreshToken.name)
     private refreshTokenModel: Model<RefreshToken>,
     private jwtService: JwtService,
+    private responseService: ResponseService,
   ) {}
   async login(body: LoginAuthDto) {
     const { email, password } = body;
@@ -22,9 +23,15 @@ export class AuthService {
         email: email.toLowerCase(),
       })
       .select('+password');
-    if (!emailCheck) return failResponse('Email hoặc mật khẩu không đúng!');
+    if (!emailCheck)
+      return this.responseService.failResponse(
+        'Email hoặc mật khẩu không đúng!',
+      );
     const passwordCheck = bcrypt.compareSync(password, emailCheck.password);
-    if (!passwordCheck) return failResponse('Email hoặc mật khẩu không đúng!');
+    if (!passwordCheck)
+      return this.responseService.failResponse(
+        'Email hoặc mật khẩu không đúng!',
+      );
     const access_token = this.jwtService.sign(
       { _id: emailCheck._id },
       { expiresIn: '15m' },
@@ -40,7 +47,7 @@ export class AuthService {
     };
     await this.refreshTokenModel.findOneAndDelete({ user: emailCheck._id });
     await this.refreshTokenModel.create(createRefreshToken);
-    return successResponse({
+    return this.responseService.successResponse({
       access_token,
       refresh_token,
     });

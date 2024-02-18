@@ -10,6 +10,7 @@ import {
   RefreshToken,
   RefreshTokenSchema,
 } from 'src/auth/dto/refresh-token.schema';
+import { ResponseModule } from 'src/response/response.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import {
       }),
       inject: [ConfigService],
     }),
+    ResponseModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

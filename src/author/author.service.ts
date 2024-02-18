@@ -4,10 +4,10 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Author } from './schema/author.schema';
-import { failResponse, successResponse } from 'utils/response';
 import { TQuery } from 'utils/model/query.model';
 import { QueryService } from 'src/query/query.service';
 import { CommonService } from 'src/common/common.service';
+import { ResponseService } from 'src/response/response.service';
 
 @Injectable()
 export class AuthorService {
@@ -15,6 +15,7 @@ export class AuthorService {
     @InjectModel(Author.name) private authorModel: Model<Author>,
     private queryService: QueryService,
     private commonService: CommonService,
+    private responseService: ResponseService,
   ) {}
 
   async create(payload: CreateAuthorDto) {
@@ -44,7 +45,8 @@ export class AuthorService {
   async update(id: number, body: UpdateAuthorDto, query: TQuery) {
     const { name } = body;
     const existCheck = await this.authorModel.findById(id);
-    if (!existCheck) return failResponse('Không tồn tại tác giả này');
+    if (!existCheck)
+      return this.responseService.failResponse('Không tồn tại tác giả này');
     await this.authorModel.findByIdAndUpdate(id, {
       name,
       slug: this.commonService.toSlug(name) || name,
@@ -59,10 +61,9 @@ export class AuthorService {
 
   async remove(id: number) {
     const find = await this.authorModel.findById(id);
-    if (!find) return failResponse('Không tìm thấy user này!');
+    if (!find)
+      return this.responseService.failResponse('Không tìm thấy user này!');
     await this.authorModel.findByIdAndDelete(id);
-    return successResponse({
-      message: 'Thành công!',
-    });
+    return this.responseService.successResponse('Thành công!');
   }
 }

@@ -11,6 +11,7 @@ import { RoleModule } from './role/role.module';
 import { ConvertModule } from './convert/convert.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
+import { ResponseModule } from './response/response.module';
 
 @Global()
 @Module({
@@ -31,6 +32,7 @@ import { QueryModule } from './query/query.module';
     ConvertModule,
     CommonModule,
     QueryModule,
+    ResponseModule,
   ],
 })
 export class AppModule {}

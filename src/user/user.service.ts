@@ -7,8 +7,8 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { TQuery } from 'utils/model/query.model';
-import { failResponse, successResponse } from 'utils/response';
 import { QueryService } from 'src/query/query.service';
+import { ResponseService } from 'src/response/response.service';
 
 @Injectable()
 export class UserService {
@@ -16,13 +16,15 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<User>,
     private configService: ConfigService,
     private queryService: QueryService,
+    private responseService: ResponseService,
   ) {}
   async create(payload: CreateUserDto, query: TQuery) {
     const { email, password } = payload;
     const dupCheck = await this.userModel.findOne({
       email,
     });
-    if (dupCheck) return failResponse('Email đã được dùng!');
+    if (dupCheck)
+      return this.responseService.failResponse('Email đã được dùng!');
     const data = {
       email,
       password: bcrypt.hashSync(
@@ -36,7 +38,7 @@ export class UserService {
       query,
       create._id,
     );
-    return successResponse(result);
+    return this.responseService.successResponse(result);
   }
 
   find() {

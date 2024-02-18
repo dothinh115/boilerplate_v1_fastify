@@ -7,6 +7,7 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
 import { Story, StorySchema } from 'src/story/schema/story.schema';
 import { QueryModule } from 'src/query/query.module';
 import { CommonModule } from 'src/common/common.module';
+import { ResponseModule } from 'src/response/response.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CommonModule } from 'src/common/common.module';
     ]),
     QueryModule,
     CommonModule,
+    ResponseModule,
   ],
   controllers: [CategoryController],
   providers: [CategoryService],
