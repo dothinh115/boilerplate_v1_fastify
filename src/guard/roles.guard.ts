@@ -21,10 +21,14 @@ export class RolesGuard implements CanActivate {
     const { _id } = req.user;
     const { id } = req.params;
     //trường hợp chính chủ (self)
-    console.log(rolesArr);
+    let self = false;
     for (const role of rolesArr) {
-      if (role === roles.self) return true;
+      if (role === roles.self) {
+        self = true;
+        break;
+      }
     }
+    if (self && _id === id) return true;
 
     //trường hợp là đúng phân quyền
     const userInfo = await this.userModel.findById(_id);
