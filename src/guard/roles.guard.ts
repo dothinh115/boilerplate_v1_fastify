@@ -19,18 +19,6 @@ export class RolesGuard implements CanActivate {
     if (!rolesArr) return true;
     const req = context.switchToHttp().getRequest();
     const { _id } = req.user;
-    const { id } = req.params;
-    //trường hợp chính chủ (self)
-    let self = false;
-    for (const role of rolesArr) {
-      if (role === roles.self) {
-        self = true;
-        break;
-      }
-    }
-    if (self && _id === id) return true;
-
-    //trường hợp là đúng phân quyền
     const userInfo = await this.userModel.findById(_id);
     for (const role of rolesArr) {
       if (role === userInfo.role) return true;
