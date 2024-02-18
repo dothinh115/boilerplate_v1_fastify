@@ -4,35 +4,37 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category } from './schema/category.schema';
-import { getId, toSlug } from 'utils/function';
 import { TQuery } from 'utils/model/query.model';
 import { failResponse, successResponse } from 'utils/response';
 import { Story } from 'src/story/schema/story.schema';
-import { handleQuery } from 'utils/query/handleQuery';
+import { QueryService } from 'src/query/query.service';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
     @InjectModel(Story.name) private storyModel: Model<Story>,
+    private queryService: QueryService,
+    private commonService: CommonService,
   ) {}
 
   async create(payload: CreateCategoryDto) {
     const { title } = payload;
     if (!title) return;
 
-    const _id = await getId(this.categoryModel);
+    const _id = await this.commonService.getId(this.categoryModel);
     const data: Category = {
       _id,
       title,
-      slug: toSlug(title),
+      slug: this.commonService.toSlug(title),
     };
     const result = await this.categoryModel.create(data);
     return result;
   }
 
   async find(query: TQuery) {
-    return await handleQuery(this.categoryModel, query);
+    return await this.queryService.handleQuery(this.categoryModel, query);
   }
 
   async update(id: number, body: UpdateCategoryDto, query: TQuery) {
@@ -40,9 +42,13 @@ export class CategoryService {
     if (!existCheck) return failResponse('Không tồn tại thể loại này!');
     await this.categoryModel.findByIdAndUpdate(id, {
       ...body,
-      slug: toSlug(body.title),
+      slug: this.commonService.toSlug(body.title),
     });
-    const result = await handleQuery(this.categoryModel, query, id);
+    const result = await this.queryService.handleQuery(
+      this.categoryModel,
+      query,
+      id,
+    );
     return result;
   }
 

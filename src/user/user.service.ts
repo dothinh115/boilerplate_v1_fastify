@@ -8,13 +8,14 @@ import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { TQuery } from 'utils/model/query.model';
 import { failResponse, successResponse } from 'utils/response';
-import { handleQuery } from 'utils/query/handleQuery';
+import { QueryService } from 'src/query/query.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private configService: ConfigService,
+    private queryService: QueryService,
   ) {}
   async create(payload: CreateUserDto, query: TQuery) {
     const { email, password } = payload;
@@ -30,16 +31,16 @@ export class UserService {
       ),
     };
     const create = await this.userModel.create(data);
-    const result = await handleQuery(this.userModel, query, create._id);
+    const result = await this.queryService.handleQuery(
+      this.userModel,
+      query,
+      create._id,
+    );
     return successResponse(result);
   }
 
-  findAll() {
+  find() {
     return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

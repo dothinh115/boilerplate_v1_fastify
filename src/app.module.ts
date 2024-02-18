@@ -5,11 +5,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthorModule } from './author/author.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { CategoryModule } from './category/category.module';
-import { StatusModule } from './status/status.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { ConvertModule } from './convert/convert.module';
+import { CommonModule } from './common/common.module';
+import { QueryModule } from './query/query.module';
 
 @Global()
 @Module({
@@ -24,11 +25,12 @@ import { ConvertModule } from './convert/convert.module';
     AuthorModule,
     ChapterModule,
     CategoryModule,
-    StatusModule,
     AuthModule,
     UserModule,
     RoleModule,
     ConvertModule,
+    CommonModule,
+    QueryModule,
   ],
 })
 export class AppModule {}

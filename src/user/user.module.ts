@@ -4,6 +4,7 @@ import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schema/user.schema';
 import { ConfigModule } from '@nestjs/config';
+import { QueryModule } from 'src/query/query.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
       },
     ]),
     ConfigModule,
+    QueryModule,
   ],
   controllers: [UserController],
   providers: [UserService],

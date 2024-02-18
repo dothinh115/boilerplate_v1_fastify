@@ -11,3 +11,5 @@ export type TPopulate = {
   populate?: any;
   select?: string;
 };
+
+export const numberRegex = new RegExp(/^\d+$/);

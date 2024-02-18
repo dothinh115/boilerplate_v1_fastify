@@ -4,6 +4,8 @@ import { RoleController } from './role.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Role, RoleSchema } from './schema/role.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
+import { QueryModule } from 'src/query/query.module';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
         schema: UserSchema,
       },
     ]),
+    QueryModule,
+    CommonModule,
   ],
   controllers: [RoleController],
   providers: [RoleService],

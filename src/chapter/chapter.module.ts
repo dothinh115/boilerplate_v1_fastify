@@ -3,6 +3,7 @@ import { ChapterService } from './chapter.service';
 import { ChapterController } from './chapter.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Chapter, ChapterSchema } from './schema/chapter.schema';
+import { QueryModule } from 'src/query/query.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { Chapter, ChapterSchema } from './schema/chapter.schema';
         schema: ChapterSchema,
       },
     ]),
+    QueryModule,
   ],
   controllers: [ChapterController],
   providers: [ChapterService],

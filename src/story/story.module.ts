@@ -8,6 +8,8 @@ import { Status, StatusSchema } from 'src/story/schema/status.schema';
 import { Category, CatgorySchema } from 'src/category/schema/category.schema';
 import { Chapter, ChapterSchema } from 'src/chapter/schema/chapter.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
+import { QueryModule } from 'src/query/query.module';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
       { name: Chapter.name, schema: ChapterSchema },
       { name: User.name, schema: UserSchema },
     ]),
+    QueryModule,
+    CommonModule,
   ],
   controllers: [StoryController],
   providers: [StoryService],

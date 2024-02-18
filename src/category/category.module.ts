@@ -5,6 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CatgorySchema } from './schema/category.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
 import { Story, StorySchema } from 'src/story/schema/story.schema';
+import { QueryModule } from 'src/query/query.module';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { Story, StorySchema } from 'src/story/schema/story.schema';
       { name: Story.name, schema: StorySchema },
       { name: User.name, schema: UserSchema },
     ]),
+    QueryModule,
+    CommonModule,
   ],
   controllers: [CategoryController],
   providers: [CategoryService],

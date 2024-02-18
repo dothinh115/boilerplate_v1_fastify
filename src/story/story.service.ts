@@ -3,35 +3,39 @@ import { CreateStoryDto } from './dto/create-story.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Story } from './schema/story.schema';
-import { getId, toSlug } from 'utils/function';
 import { TQuery } from 'utils/model/query.model';
 import { failResponse, successResponse } from 'utils/response';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { handleQuery } from 'utils/query/handleQuery';
+import { QueryService } from 'src/query/query.service';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class StoryService {
-  constructor(@InjectModel(Story.name) private storyModel: Model<Story>) {}
+  constructor(
+    @InjectModel(Story.name) private storyModel: Model<Story>,
+    private queryService: QueryService,
+    private commonService: CommonService,
+  ) {}
 
-  async create(payload: CreateStoryDto) {
-    const { title, author } = payload;
+  async create(body: CreateStoryDto) {
+    const { title, author } = body;
     const dupCheck = await this.storyModel.findOne({
       title,
       author,
     });
     if (dupCheck) return failResponse('Truyện đã tồn tại!');
-    const _id = await getId(this.storyModel);
+    const _id = await this.commonService.getId(this.storyModel);
     const data = {
       _id,
-      ...payload,
-      slug: toSlug(title),
+      ...body,
+      slug: this.commonService.toSlug(title),
     };
     const result = await this.storyModel.create(data);
     return result;
   }
 
   async find(query: TQuery) {
-    const result = handleQuery(this.storyModel, query);
+    const result = this.queryService.handleQuery(this.storyModel, query);
     return result;
   }
 
@@ -41,10 +45,14 @@ export class StoryService {
     await this.storyModel.findByIdAndUpdate(id, {
       ...body,
       ...(body.title && {
-        slug: toSlug(body.title),
+        slug: this.commonService.toSlug(body.title),
       }),
     });
-    const result = await handleQuery(this.storyModel, query, id);
+    const result = await this.queryService.handleQuery(
+      this.storyModel,
+      query,
+      id,
+    );
     return result;
   }
 
