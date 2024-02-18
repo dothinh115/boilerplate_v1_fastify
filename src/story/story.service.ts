@@ -42,7 +42,7 @@ export class StoryService {
   }
 
   async find(query: TQuery) {
-    const result = this.queryService.handleQuery(this.storyModel, query);
+    const result = await this.queryService.handleQuery(this.storyModel, query);
     return this.responseService.successResponse(result);
   }
 
