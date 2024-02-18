@@ -10,27 +10,26 @@ export const handleQuery = async <T>(
 ) => {
   const { fields, filter, page, limit, meta } = query;
   let selectObj: any,
-    fieldSplit: any[] = [],
+    populate: any[] = [],
     result: any[],
     filterString: object = {},
     total_count: number,
     filter_count: number,
     metaSelect: string[] = [];
   if (fields) {
-    fieldSplit = handleField(fields).populate;
+    populate = handleField(fields).populate;
     selectObj = handleField(fields).select;
   }
   if (filter) filterString = handleFilter(filter);
-  console.log(filterString);
   if (meta) metaSelect = meta.split(',').filter((meta: string) => meta !== '');
 
   try {
     if (_id)
-      result = await model.findById(_id, { ...selectObj }).populate(fieldSplit);
+      result = await model.findById(_id, { ...selectObj }).populate(populate);
     else
       result = await model
         .find({ ...filterString }, { ...selectObj })
-        .populate(fieldSplit)
+        .populate(populate)
         .skip((+page - 1) * +limit)
         .limit(+limit)
         .lean();
