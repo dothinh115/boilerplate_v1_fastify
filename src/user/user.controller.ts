@@ -40,7 +40,7 @@ export class UserController {
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin, roles.self)
+  @Roles(roles.admin)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -51,7 +51,7 @@ export class UserController {
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin, roles.self)
+  @Roles(roles.admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
