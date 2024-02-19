@@ -11,6 +11,10 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
 import { QueryModule } from 'src/query/query.module';
 import { CommonModule } from 'src/common/common.module';
 import { ResponseModule } from 'src/response/response.module';
+import {
+  Permission,
+  PermissionSchema,
+} from 'src/permision/schema/permission.schema';
 
 @Module({
   imports: [
@@ -21,6 +25,7 @@ import { ResponseModule } from 'src/response/response.module';
       { name: Category.name, schema: CatgorySchema },
       { name: Chapter.name, schema: ChapterSchema },
       { name: User.name, schema: UserSchema },
+      { name: Permission.name, schema: PermissionSchema },
     ]),
     QueryModule,
     CommonModule,

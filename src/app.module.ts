@@ -14,6 +14,9 @@ import { QueryModule } from './query/query.module';
 import { ResponseModule } from './response/response.module';
 import { MeModule } from './me/me.module';
 import { MailModule } from './mail/mail.module';
+import { PermisionModule } from './permision/permision.module';
+import { DiscoveryModule } from '@nestjs/core';
+import { InitModule } from './init/init.module';
 
 @Global()
 @Module({
@@ -22,7 +25,7 @@ import { MailModule } from './mail/mail.module';
       isGlobal: true,
     }),
     StoryModule,
-    MongooseModule.forRoot('mongodb://root:1234@localhost:27017', {
+    MongooseModule.forRoot(process.env.DB_URI, {
       dbName: 'truyenhot',
     }),
     AuthorModule,
@@ -37,6 +40,9 @@ import { MailModule } from './mail/mail.module';
     ResponseModule,
     MeModule,
     MailModule,
+    PermisionModule,
+    DiscoveryModule,
+    InitModule,
   ],
 })
 export class AppModule {}

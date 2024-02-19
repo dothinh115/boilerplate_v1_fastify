@@ -1,15 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { PermisionService } from './permision.service';
+import { PermisionController } from './permision.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './schema/user.schema';
-import { ConfigModule } from '@nestjs/config';
+import { User, UserSchema } from 'src/user/schema/user.schema';
+import { Permission, PermissionSchema } from './schema/permission.schema';
 import { QueryModule } from 'src/query/query.module';
 import { ResponseModule } from 'src/response/response.module';
-import {
-  Permission,
-  PermissionSchema,
-} from 'src/permision/schema/permission.schema';
 
 @Module({
   imports: [
@@ -23,12 +19,10 @@ import {
         schema: PermissionSchema,
       },
     ]),
-    ConfigModule,
     QueryModule,
     ResponseModule,
   ],
-  controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  controllers: [PermisionController],
+  providers: [PermisionService],
 })
-export class UserModule {}
+export class PermisionModule {}

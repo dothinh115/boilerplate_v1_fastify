@@ -4,7 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category } from './schema/category.schema';
-import { TQuery } from 'utils/model/query.model';
+import { TQuery } from 'src/utils/model/query.model';
 import { Story } from 'src/story/schema/story.schema';
 import { QueryService } from 'src/query/query.service';
 import { CommonService } from 'src/common/common.service';

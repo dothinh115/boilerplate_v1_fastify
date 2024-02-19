@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { MeService } from './me.service';
 import { TokenRequired } from 'src/strategy';
-import { TQuery } from 'utils/model/query.model';
-import { CustomRequest } from 'utils/model/request.model';
+import { TQuery } from 'src/utils/model/query.model';
+import { CustomRequest } from 'src/utils/model/request.model';
 import { UserService } from 'src/user/user.service';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 
 @Controller('me')
 export class MeController {
@@ -32,10 +32,11 @@ export class MeController {
   @Patch()
   update(
     @Req() req: CustomRequest,
-    @Body() body: UpdateUserDto,
+    @Body() body: UpdateMeDto,
     @Query() query: TQuery,
   ) {
     const { _id } = req.user;
+    body = UpdateMeDto.plainToClass(body);
     return this.userService.update(_id, body, query);
   }
 }

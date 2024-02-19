@@ -4,8 +4,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'utils/model/query.model';
-import roles from 'utils/roles';
+import { TQuery } from 'src/utils/model/query.model';
 import { QueryService } from 'src/query/query.service';
 import { CommonService } from 'src/common/common.service';
 import { ResponseService } from 'src/response/response.service';
@@ -60,10 +59,6 @@ export class RoleService {
     const existCheck = await this.roleModel.findById(id);
     if (!existCheck)
       return this.responseService.failResponse('Không tồn tại role này!');
-    for (const index in roles) {
-      if (id === roles[index])
-        return this.responseService.failResponse('Không thể xoá role này!');
-    }
     await this.roleModel.findByIdAndDelete(id);
     return this.responseService.successResponse('Thành công!');
   }
