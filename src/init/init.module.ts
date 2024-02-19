@@ -5,7 +5,7 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
 import {
   Permission,
   PermissionSchema,
-} from 'src/permision/schema/permission.schema';
+} from 'src/permission/schema/permission.schema';
 import { ConfigModule } from '@nestjs/config';
 import { Role, RoleSchema } from 'src/role/schema/role.schema';
 import { CommonModule } from 'src/common/common.module';

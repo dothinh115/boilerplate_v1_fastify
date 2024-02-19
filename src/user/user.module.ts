@@ -9,7 +9,7 @@ import { ResponseModule } from 'src/response/response.module';
 import {
   Permission,
   PermissionSchema,
-} from 'src/permision/schema/permission.schema';
+} from 'src/permission/schema/permission.schema';
 
 @Module({
   imports: [
