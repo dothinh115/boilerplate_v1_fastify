@@ -7,6 +7,10 @@ import { QueryModule } from 'src/query/query.module';
 import { CommonModule } from 'src/common/common.module';
 import { ResponseModule } from 'src/response/response.module';
 import { User, UserSchema } from 'src/user/schema/user.schema';
+import {
+  Permission,
+  PermissionSchema,
+} from 'src/permision/schema/permission.schema';
 
 @Module({
   imports: [
@@ -18,6 +22,10 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Permission.name,
+        schema: PermissionSchema,
       },
     ]),
     QueryModule,

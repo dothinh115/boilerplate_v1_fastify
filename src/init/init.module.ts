@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { MailService } from './mail.service';
-import { MailController } from './mail.controller';
+import { InitService, OnInitService } from './init.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/user/schema/user.schema';
-import { ConfigModule } from '@nestjs/config';
-import { ResponseModule } from 'src/response/response.module';
 import {
   Permission,
   PermissionSchema,
 } from 'src/permision/schema/permission.schema';
+import { ConfigModule } from '@nestjs/config';
+import { Role, RoleSchema } from 'src/role/schema/role.schema';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -21,12 +21,15 @@ import {
         name: Permission.name,
         schema: PermissionSchema,
       },
+      {
+        name: Role.name,
+        schema: RoleSchema,
+      },
     ]),
     ConfigModule,
-    ResponseModule,
+    CommonModule,
   ],
-  controllers: [MailController],
-  providers: [MailService],
-  exports: [MailService],
+  providers: [OnInitService, InitService],
+  exports: [OnInitService],
 })
-export class MailModule {}
+export class InitModule {}

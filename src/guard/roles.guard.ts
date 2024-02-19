@@ -2,26 +2,37 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Permission } from 'src/permision/schema/permission.schema';
 import { User } from 'src/user/schema/user.schema';
-import roles from 'utils/roles';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Permission.name) private permissionModel: Model<Permission>,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const rolesArr = this.reflector.get<string[]>(
-      'roles',
-      context.getHandler(),
-    );
-    if (!rolesArr) return true;
-    const req = context.switchToHttp().getRequest();
-    const { _id } = req.user;
+    const { route, user } = context.switchToHttp().getRequest();
+    if (!user) return true;
+    const { _id } = user;
     const userInfo = await this.userModel.findById(_id);
-    for (const role of rolesArr) {
-      if (role === userInfo.role) return true;
+    const { role, rootUser } = userInfo;
+    if (rootUser) return true;
+    const path = route.path;
+    let method: string;
+    for (const key in route.methods) {
+      method = key;
+      break;
     }
+    const accessCheck = await this.permissionModel.findOne({
+      path,
+      method,
+    });
+    for (const access of accessCheck.accessable) {
+      if (access === role) return true;
+      break;
+    }
+    return false;
   }
 }

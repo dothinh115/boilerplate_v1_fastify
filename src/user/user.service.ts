@@ -6,7 +6,7 @@ import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { TQuery } from 'utils/model/query.model';
+import { TQuery } from 'src/utils/model/query.model';
 import { QueryService } from 'src/query/query.service';
 import { ResponseService } from 'src/response/response.service';
 
@@ -55,10 +55,13 @@ export class UserService {
     //tạm thời không cho đổi mail
 
     await this.userModel.findByIdAndUpdate(id, {
-      password: bcrypt.hashSync(
-        password,
-        Number(this.configService.get('BCRYPT_LOOPS')),
-      ),
+      ...body,
+      ...(password && {
+        password: bcrypt.hashSync(
+          password,
+          Number(this.configService.get('BCRYPT_LOOPS')),
+        ),
+      }),
     });
     const result = await this.queryService.handleQuery(
       this.userModel,

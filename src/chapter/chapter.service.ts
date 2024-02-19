@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
-import { TQuery } from 'utils/model/query.model';
+import { TQuery } from 'src/utils/model/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Chapter } from './schema/chapter.schema';
 import { Model } from 'mongoose';

@@ -14,11 +14,9 @@ import {
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { TQuery } from 'utils/model/query.model';
+import { TQuery } from 'src/utils/model/query.model';
 import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
-import { Roles } from 'src/guard/roles.decorator';
-import roles from 'utils/roles';
 
 @UsePipes(new ValidationPipe())
 @Controller('role')
@@ -26,20 +24,19 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin)
   @Post()
   create(@Body() body: CreateRoleDto, @Query() query: TQuery) {
     body = CreateRoleDto.plainToClass(body);
     return this.roleService.create(body, query);
   }
 
+  @UseGuards(RolesGuard)
   @Get()
   find(@Query() query: TQuery) {
     return this.roleService.find(query);
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -51,7 +48,6 @@ export class RoleController {
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Roles(roles.admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.roleService.remove(id);

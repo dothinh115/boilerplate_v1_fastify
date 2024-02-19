@@ -4,7 +4,7 @@ import { User } from 'src/user/schema/user.schema';
 import { Model } from 'mongoose';
 import { QueryService } from 'src/query/query.service';
 import { ResponseService } from 'src/response/response.service';
-import { TQuery } from 'utils/model/query.model';
+import { TQuery } from 'src/utils/model/query.model';
 
 @Injectable()
 export class MeService {

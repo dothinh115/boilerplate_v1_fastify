@@ -4,7 +4,7 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Author } from './schema/author.schema';
-import { TQuery } from 'utils/model/query.model';
+import { TQuery } from 'src/utils/model/query.model';
 import { QueryService } from 'src/query/query.service';
 import { CommonService } from 'src/common/common.service';
 import { ResponseService } from 'src/response/response.service';
