@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { CommonService } from 'src/common/common.service';
 import { numberRegex } from 'utils/model/common.model';
 import { TPopulate, TQuery } from 'utils/model/query.model';
+import * as qs from 'qs';
 
 @Injectable()
 export class QueryService {
@@ -105,33 +106,40 @@ export class QueryService {
   }
 
   handleFilter(object: object) {
-    let result: typeof object = {},
-      filterArr: any[] = [];
+    let result: typeof object = {};
+    //Chạy qua điều kiện của object
     for (const key in object) {
+      //nếu là mảng
       if (Array.isArray(object[key])) {
-        for (const filter of object[key]) {
-          filterArr = [...filterArr, this.stringToNumberObject(filter)];
+        for (const condition of object[key]) {
+          if (result[key]) {
+            result[key] = [...result[key], this.handleFilter(condition)];
+          } else {
+            result = {
+              [key]: [this.handleFilter(condition)],
+            };
+          }
         }
-        result = {
-          [key]: filterArr,
-        };
-        return result;
-      }
-      //trong trường hợp tìm kiếm bằng title hoặc name thì đưa về slug để tìm
-      if (key === 'title' || key === 'name') {
-        for (const compareKey in object[key]) {
-          return {
-            slug: {
-              //compare key sử dụng quy tắc của mongodb, ví dụ như $eq, $in, $regex...
-              [compareKey]: this.commonService.toSlug(object[key][compareKey]),
-            },
+      } else {
+        //nếu là object
+        if (key === 'title' || key === 'name') {
+          for (const compareKey in object[key]) {
+            result = {
+              slug: {
+                //compare key sử dụng quy tắc của mongodb, ví dụ như $eq, $in, $regex...
+                [compareKey]: this.commonService.toSlug(
+                  object[key][compareKey],
+                ),
+              },
+            };
+          }
+        } else
+          result = {
+            [key]: this.stringToNumberObject(object[key]),
           };
-        }
-      } else
-        return {
-          [key]: this.stringToNumberObject(object[key]),
-        };
+      }
     }
+    return result;
   }
 
   //hàm đưa giá trị cuối cùng của object về thành number nếu nó thực sự là number
@@ -139,7 +147,7 @@ export class QueryService {
     if (typeof value === 'string') {
       return +value;
     }
-    for (const key in value) {
+    for (let key in value) {
       if (typeof value[key] !== 'object') {
         return {
           [key]: numberRegex.test(value[key]) ? +value[key] : value[key],
@@ -164,7 +172,10 @@ export class QueryService {
       populate = this.handleField(fields).populate;
       selectObj = this.handleField(fields).select;
     }
-    if (filter) filterString = this.handleFilter(filter);
+    if (filter)
+      filterString = this.handleFilter(
+        qs.parse(qs.stringify(filter), { depth: 10 }),
+      );
     if (meta)
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
 
