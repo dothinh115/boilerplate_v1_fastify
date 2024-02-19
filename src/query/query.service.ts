@@ -143,18 +143,18 @@ export class QueryService {
   }
 
   //hàm đưa giá trị cuối cùng của object về thành number nếu nó thực sự là number
-  stringToNumberObject(value: object | string) {
-    if (typeof value === 'string') {
-      return +value;
+  stringToNumberObject(object: object | string) {
+    if (typeof object === 'string') {
+      return +object;
     }
-    for (let key in value) {
-      if (typeof value[key] !== 'object') {
+    for (let key in object) {
+      if (typeof object[key] !== 'object') {
         return {
-          [key]: numberRegex.test(value[key]) ? +value[key] : value[key],
+          [key]: numberRegex.test(object[key]) ? +object[key] : object[key],
         };
       }
       return {
-        [key]: this.stringToNumberObject(value[key]),
+        [key]: this.stringToNumberObject(object[key]),
       };
     }
   }
@@ -164,7 +164,7 @@ export class QueryService {
     let selectObj: any,
       populate: any[] = [],
       result: any[],
-      filterString: object = {},
+      filterObj: object = {},
       total_count: number,
       filter_count: number,
       metaSelect: string[] = [];
@@ -173,9 +173,10 @@ export class QueryService {
       selectObj = this.handleField(fields).select;
     }
     if (filter)
-      filterString = this.handleFilter(
+      filterObj = this.handleFilter(
         qs.parse(qs.stringify(filter), { depth: 10 }),
       );
+
     if (meta)
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
 
@@ -184,7 +185,7 @@ export class QueryService {
         result = await model.findById(_id, { ...selectObj }).populate(populate);
       else
         result = await model
-          .find({ ...filterString }, { ...selectObj })
+          .find({ ...filterObj }, { ...selectObj })
           .populate(populate)
           .skip((+page - 1) * +limit)
           .limit(+limit)
@@ -192,13 +193,13 @@ export class QueryService {
       for (const meta of metaSelect) {
         if (meta === '*') {
           total_count = await model.find().countDocuments();
-          filter_count = await model.find({ ...filterString }).countDocuments();
+          filter_count = await model.find({ ...filterObj }).countDocuments();
           break;
         }
         if (meta === 'total_count')
           total_count = await model.find().countDocuments();
         if (meta === 'filter_count')
-          filter_count = await model.find({ ...filterString }).countDocuments();
+          filter_count = await model.find({ ...filterObj }).countDocuments();
       }
     } catch (error) {}
 
