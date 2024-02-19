@@ -10,7 +10,7 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
 import {
   Permission,
   PermissionSchema,
-} from 'src/permision/schema/permission.schema';
+} from 'src/permission/schema/permission.schema';
 
 @Module({
   imports: [

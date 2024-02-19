@@ -14,7 +14,7 @@ import { QueryModule } from './query/query.module';
 import { ResponseModule } from './response/response.module';
 import { MeModule } from './me/me.module';
 import { MailModule } from './mail/mail.module';
-import { PermisionModule } from './permision/permision.module';
+import { PermisionModule } from './permission/permision.module';
 import { DiscoveryModule } from '@nestjs/core';
 import { InitModule } from './init/init.module';
 

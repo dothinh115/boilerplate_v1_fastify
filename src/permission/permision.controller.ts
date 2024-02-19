@@ -18,7 +18,7 @@ import { TQuery } from 'src/utils/model/query.model';
 import { TokenRequired } from 'src/strategy';
 
 @UsePipes(new ValidationPipe())
-@Controller('permision')
+@Controller('permission')
 export class PermisionController {
   constructor(private readonly permisionService: PermisionService) {}
 
