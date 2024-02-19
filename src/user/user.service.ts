@@ -46,13 +46,21 @@ export class UserService {
     return this.responseService.successResponse(result);
   }
 
-  async update(id: string, body: UpdateUserDto, query: TQuery) {
+  async update(id: string, body: UpdateUserDto, query: TQuery, _id: string) {
     const { email, password } = body;
 
     const existCheck = await this.userModel.findById(id);
     if (!existCheck)
       return this.responseService.failResponse('Không tồn tại user này!');
     //tạm thời không cho đổi mail
+
+    //check xem có phải là rootUser hay không
+    if (existCheck.rootUser) {
+      if (id !== _id)
+        return this.responseService.failResponse(
+          'Không có quyền chỉnh sửa root user',
+        );
+    }
 
     await this.userModel.findByIdAndUpdate(id, {
       ...body,

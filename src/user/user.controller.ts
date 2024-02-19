@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,6 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { TQuery } from 'src/utils/model/query.model';
 import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
+import { CustomRequest } from 'src/utils/model/request.model';
 
 @UsePipes(new ValidationPipe())
 @Controller('user')
@@ -40,10 +42,13 @@ export class UserController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() body: UpdateUserDto,
     @Query() query: TQuery,
+    @Req() req: CustomRequest,
   ) {
-    return this.userService.update(id, updateUserDto, query);
+    body = UpdateUserDto.plainToClass(body);
+    const { _id } = req.user._id;
+    return this.userService.update(id, body, query, _id);
   }
 
   @UseGuards(TokenRequired, RolesGuard)

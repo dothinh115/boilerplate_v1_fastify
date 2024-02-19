@@ -37,6 +37,6 @@ export class MeController {
   ) {
     const { _id } = req.user;
     body = UpdateMeDto.plainToClass(body);
-    return this.userService.update(_id, body, query);
+    return this.userService.update(_id, body, query, _id);
   }
 }
