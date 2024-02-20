@@ -8,7 +8,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @Expose()
   password?: string;
   @Expose()
-  role?: string;
+  roles?: string;
   @Expose()
   actived?: boolean;
   static plainToClass<T>(this: new (...arg: any[]) => T, obj: T) {
