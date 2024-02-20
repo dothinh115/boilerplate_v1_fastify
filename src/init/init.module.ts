@@ -6,7 +6,6 @@ import {
   Permission,
   PermissionSchema,
 } from 'src/permission/schema/permission.schema';
-import { ConfigModule } from '@nestjs/config';
 import { Role, RoleSchema } from 'src/role/schema/role.schema';
 import { CommonModule } from 'src/common/common.module';
 
@@ -26,7 +25,6 @@ import { CommonModule } from 'src/common/common.module';
         schema: RoleSchema,
       },
     ]),
-    ConfigModule,
     CommonModule,
   ],
   providers: [OnInitService, InitService],
