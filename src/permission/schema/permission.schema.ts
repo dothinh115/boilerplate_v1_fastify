@@ -11,7 +11,7 @@ export class Permission {
   @Prop({ required: true })
   method: string;
   @Prop({ type: mongoose.Schema.Types.Array, ref: 'Role' })
-  accessable: Role[];
+  roles: Role[];
 }
 
 export const PermissionSchema = SchemaFactory.createForClass(Permission)

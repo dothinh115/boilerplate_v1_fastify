@@ -29,9 +29,8 @@ export class RolesGuard implements CanActivate {
       path,
       method,
     });
-    for (const access of accessCheck.accessable) {
+    for (const access of accessCheck.roles) {
       if (access === role) return true;
-      break;
     }
     return false;
   }

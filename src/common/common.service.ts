@@ -19,9 +19,4 @@ export class CommonService {
     const _id = lastRecord.length === 0 ? 1 : +lastRecord[0]._id + 1;
     return _id;
   }
-
-  async existCheckById<T>(model: Model<T>, id: string | number) {
-    const result = model.findById(id);
-    return !!result;
-  }
 }
