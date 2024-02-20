@@ -4,19 +4,18 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
-import * as bcrypt from 'bcryptjs';
-import { ConfigService } from '@nestjs/config';
 import { TQuery } from 'src/utils/model/query.model';
 import { QueryService } from 'src/query/query.service';
 import { ResponseService } from 'src/response/response.service';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private configService: ConfigService,
     private queryService: QueryService,
     private responseService: ResponseService,
+    private commonService: CommonService,
   ) {}
   async create(body: CreateUserDto, query: TQuery) {
     const { email, password } = body;
@@ -27,10 +26,7 @@ export class UserService {
       return this.responseService.failResponse('Email đã được dùng!');
     const data = {
       email,
-      password: bcrypt.hashSync(
-        password,
-        Number(this.configService.get('BCRYPT_LOOPS')),
-      ),
+      password: this.commonService.getBcryptHash(password),
     };
     const create = await this.userModel.create(data);
     const result = await this.queryService.handleQuery(
@@ -65,10 +61,7 @@ export class UserService {
     await this.userModel.findByIdAndUpdate(id, {
       ...body,
       ...(password && {
-        password: bcrypt.hashSync(
-          password,
-          Number(this.configService.get('BCRYPT_LOOPS')),
-        ),
+        password: this.commonService.getBcryptHash(password),
       }),
     });
     const result = await this.queryService.handleQuery(
