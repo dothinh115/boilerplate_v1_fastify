@@ -1,14 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { StoryModule } from './story/story.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthorModule } from './author/author.module';
-import { ChapterModule } from './chapter/chapter.module';
-import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
-import { ConvertModule } from './convert/convert.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
 import { ResponseModule } from './response/response.module';
@@ -24,17 +19,12 @@ import { InitModule } from './init/init.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    StoryModule,
     MongooseModule.forRoot(process.env.DB_URI, {
       dbName: 'truyenhot',
     }),
-    AuthorModule,
-    ChapterModule,
-    CategoryModule,
     AuthModule,
     UserModule,
     RoleModule,
-    ConvertModule,
     CommonModule,
     QueryModule,
     ResponseModule,
