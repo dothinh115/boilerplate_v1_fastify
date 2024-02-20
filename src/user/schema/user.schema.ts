@@ -17,7 +17,7 @@ export class User {
     ref: 'Role',
   })
   role: Role | any;
-  @Prop({ default: false, immutable: true })
+  @Prop({ default: false, immutable: true, select: false })
   rootUser: boolean;
 }
 
