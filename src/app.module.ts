@@ -20,7 +20,7 @@ import { InitModule } from './init/init.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.DB_URI, {
-      dbName: 'truyenhot',
+      dbName: process.env.DB_NAME,
     }),
     AuthModule,
     UserModule,
