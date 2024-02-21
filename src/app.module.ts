@@ -12,6 +12,7 @@ import { MailModule } from './mail/mail.module';
 import { PermisionModule } from './permission/permision.module';
 import { DiscoveryModule } from '@nestjs/core';
 import { InitModule } from './init/init.module';
+import { StrategyModule } from './strategy/strategy.module';
 
 @Global()
 @Module({
@@ -33,6 +34,7 @@ import { InitModule } from './init/init.module';
     PermisionModule,
     DiscoveryModule,
     InitModule,
+    StrategyModule,
   ],
 })
 export class AppModule {}

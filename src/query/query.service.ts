@@ -8,7 +8,7 @@ import * as qs from 'qs';
 @Injectable()
 export class QueryService {
   constructor(private commonService: CommonService) {}
-  handleField(fields: string) {
+  private handleField(fields: string) {
     let fieldHandle: any = {},
       selectObj: any,
       fieldSplit: any[] = [];
@@ -105,7 +105,7 @@ export class QueryService {
     };
   }
 
-  handleFilter(object: object) {
+  private handleFilter(object: object) {
     let result: typeof object = {};
     //Chạy qua điều kiện của object
     for (const key in object) {
@@ -143,7 +143,7 @@ export class QueryService {
   }
 
   //hàm đưa giá trị cuối cùng của object về thành number nếu nó thực sự là number
-  stringToNumberObject(object: object | string) {
+  private stringToNumberObject(object: object | string) {
     if (typeof object === 'string') {
       return +object;
     }

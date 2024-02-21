@@ -7,7 +7,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from 'src/user/schema/user.schema';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class StrategyService extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
@@ -18,8 +18,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   async validate(payload: any) {
-    const user = await this.userModel.findById(payload._id);
+    const user = await this.userModel.findById(payload._id).select('+rootUser');
     if (!user) throw new UnauthorizedException();
-    return payload;
+    return user;
   }
 }
