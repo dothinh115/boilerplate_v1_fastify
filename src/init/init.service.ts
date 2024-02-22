@@ -46,6 +46,7 @@ export class InitService {
     parentRoutes = Array.from(parentRoutes);
 
     //Tạo route cha
+    await this.routeModel.deleteMany();
     for (const parentRoute of parentRoutes) {
       const exist = await this.routeModel.exists({
         path: parentRoute,
@@ -79,9 +80,14 @@ export class InitService {
         }
       }
       if (!isContinue) continue;
-      const permission = await this.permissionModel.create(route);
+      await this.permissionModel.create(route);
+    }
+
+    //add permissions vào route
+    const permissions = await this.permissionModel.find();
+    for (const permission of permissions) {
       const findParentRoute = await this.routeModel.findOne({
-        path: this.getParentRoute(route.path),
+        path: this.getParentRoute(permission.path),
       });
       if (findParentRoute) {
         let permissionSet = new Set(findParentRoute.permissions);
