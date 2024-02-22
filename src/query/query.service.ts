@@ -90,7 +90,11 @@ export class QueryService {
       }
       for (const field of fieldArr) {
         if (field === '*') {
-          selectObj = undefined;
+          for (const key in selectObj) {
+            if (!key.includes('-')) {
+              delete selectObj[key];
+            }
+          }
           break;
         }
       }

@@ -19,14 +19,24 @@ export class InitService {
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
     @InjectModel(Role.name) private roleModel: Model<Role>,
   ) {}
+  private getParentRoute = (route: string) => {
+    return route
+      .split('/api/')
+      .filter((x: string) => x !== '')
+      .toString()
+      .split('/')[0];
+  };
   //Hàm check và lưu toàn bộ path trong dự án
   async handlePath() {
     const httpAdapter = this.adapterHost.httpAdapter;
     const server = httpAdapter.getHttpServer();
     const router = server._events.request._router;
+    let parentRoute: any = new Set();
     const existingRoutes: { path: string; method: string }[] = router.stack
       .map((routeObj: TRoute) => {
         if (routeObj.route) {
+          const route = this.getParentRoute(routeObj.route.path);
+          parentRoute.add(route);
           return {
             path: routeObj.route.path,
             method: routeObj.route.stack[0].method,
@@ -34,6 +44,7 @@ export class InitService {
         }
       })
       .filter((item: any) => item !== undefined);
+    parentRoute = Array.from(parentRoute).filter((x: string) => x !== 'auth');
 
     //Tạo route
     for (const route of existingRoutes) {
@@ -41,7 +52,12 @@ export class InitService {
         path: route.path,
         method: route.method,
       });
-      if (existCheck) continue;
+      if (
+        existCheck ||
+        this.getParentRoute(route.path) === 'auth' ||
+        this.getParentRoute(route.path) === 'me'
+      )
+        continue;
       await this.permissionModel.create(route);
       console.log(`Tạo thành công permission cho route ${route.path}`);
     }
@@ -53,7 +69,12 @@ export class InitService {
         (x: { path: string; method: string }) =>
           route.path === x.path && route.method === x.method,
       );
-      if (!find) await this.permissionModel.findByIdAndDelete(route._id);
+      if (
+        !find ||
+        this.getParentRoute(route.path) === 'auth' ||
+        this.getParentRoute(route.path) === 'me'
+      )
+        await this.permissionModel.findByIdAndDelete(route._id);
     }
   }
 
