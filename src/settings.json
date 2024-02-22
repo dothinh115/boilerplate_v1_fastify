@@ -1,0 +1,7 @@
+{
+    "ROLES": {
+        "ADMIN": "Quản trị viên",
+        "MEMBER": "Thành viên"
+    },
+    "EXCLUDED_ROUTE": ["auth", "me", "route"]
+}

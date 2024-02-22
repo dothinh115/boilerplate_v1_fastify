@@ -47,8 +47,7 @@ export class UserController {
     @Req() req: CustomRequest,
   ) {
     body = UpdateUserDto.plainToClass(body);
-    const { _id } = req.user._id;
-    return this.userService.update(id, body, query, _id);
+    return this.userService.update(id, body, query, req);
   }
 
   @UseGuards(TokenRequired, RolesGuard)

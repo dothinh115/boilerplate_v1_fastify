@@ -10,7 +10,6 @@ import { TQuery } from 'src/utils/model/query.model';
 import { UserService } from 'src/user/user.service';
 import { CommonService } from 'src/common/common.service';
 import { MailService } from 'src/mail/mail.service';
-
 @Injectable()
 export class AuthService {
   constructor(
