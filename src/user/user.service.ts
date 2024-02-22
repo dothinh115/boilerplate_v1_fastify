@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { TQuery } from 'src/utils/model/query.model';
 import { QueryService } from 'src/query/query.service';
 import { ResponseService } from 'src/response/response.service';
-import { CommonService } from 'src/common/common.service';
+import { CustomRequest } from 'src/utils/model/request.model';
 
 @Injectable()
 export class UserService {
@@ -15,20 +15,14 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<User>,
     private queryService: QueryService,
     private responseService: ResponseService,
-    private commonService: CommonService,
   ) {}
   async create(body: CreateUserDto, query: TQuery) {
-    const { email, password } = body;
     const dupCheck = await this.userModel.findOne({
-      email,
+      email: body.email,
     });
     if (dupCheck)
       return this.responseService.failResponse('Email đã được dùng!');
-    const data = {
-      email,
-      password: this.commonService.getBcryptHash(password),
-    };
-    const create = await this.userModel.create(data);
+    const create = await this.userModel.create(body);
     const result = await this.queryService.handleQuery(
       this.userModel,
       query,
@@ -42,28 +36,18 @@ export class UserService {
     return this.responseService.successResponse(result);
   }
 
-  async update(id: string, body: UpdateUserDto, query: TQuery, _id: string) {
-    const { email, password } = body;
-
+  async update(
+    id: string,
+    body: UpdateUserDto,
+    query: TQuery,
+    req: CustomRequest,
+  ) {
     const existCheck = await this.userModel.findById(id);
     if (!existCheck)
       return this.responseService.failResponse('Không tồn tại user này!');
-    //tạm thời không cho đổi mail
+    const { _id } = req.user._id;
 
-    //check xem có phải là rootUser hay không
-    if (existCheck.rootUser) {
-      if (id !== _id)
-        return this.responseService.failResponse(
-          'Không có quyền chỉnh sửa root user',
-        );
-    }
-
-    await this.userModel.findByIdAndUpdate(id, {
-      ...body,
-      ...(password && {
-        password: this.commonService.getBcryptHash(password),
-      }),
-    });
+    await this.userModel.findByIdAndUpdate(id, body, { _id });
     const result = await this.queryService.handleQuery(
       this.userModel,
       query,

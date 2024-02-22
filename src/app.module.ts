@@ -13,7 +13,8 @@ import { PermisionModule } from './permission/permision.module';
 import { DiscoveryModule } from '@nestjs/core';
 import { InitModule } from './init/init.module';
 import { StrategyModule } from './strategy/strategy.module';
-
+import { RouteModule } from './route/route.module';
+import globalPlugin from './utils/mongoose/middleware/global.middleware';
 @Global()
 @Module({
   imports: [
@@ -22,6 +23,10 @@ import { StrategyModule } from './strategy/strategy.module';
     }),
     MongooseModule.forRoot(process.env.DB_URI, {
       dbName: process.env.DB_NAME,
+      connectionFactory: (connection) => {
+        connection.plugin(globalPlugin);
+        return connection;
+      },
     }),
     AuthModule,
     UserModule,
@@ -35,6 +40,7 @@ import { StrategyModule } from './strategy/strategy.module';
     DiscoveryModule,
     InitModule,
     StrategyModule,
+    RouteModule,
   ],
 })
 export class AppModule {}

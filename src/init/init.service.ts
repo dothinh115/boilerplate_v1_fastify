@@ -6,18 +6,17 @@ import { Model } from 'mongoose';
 import { Permission } from 'src/permission/schema/permission.schema';
 import { User } from 'src/user/schema/user.schema';
 import { TRoute } from 'src/utils/model/route.model';
-import * as bcrypt from 'bcryptjs';
 import { Role } from 'src/role/schema/role.schema';
-import { CommonService } from 'src/common/common.service';
-
+import settings from '../settings.json';
+import { Route } from 'src/route/schema/route.schema';
 export class InitService {
   constructor(
     private adapterHost: HttpAdapterHost,
     private configService: ConfigService,
-    private commonService: CommonService,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
     @InjectModel(Role.name) private roleModel: Model<Role>,
+    @InjectModel(Route.name) private routeModel: Model<Route>,
   ) {}
   private getParentRoute = (route: string) => {
     return route
@@ -31,12 +30,12 @@ export class InitService {
     const httpAdapter = this.adapterHost.httpAdapter;
     const server = httpAdapter.getHttpServer();
     const router = server._events.request._router;
-    let parentRoute: any = new Set();
+    let parentRoutes: any = new Set();
     const existingRoutes: { path: string; method: string }[] = router.stack
       .map((routeObj: TRoute) => {
         if (routeObj.route) {
           const route = this.getParentRoute(routeObj.route.path);
-          parentRoute.add(route);
+          parentRoutes.add(route);
           return {
             path: routeObj.route.path,
             method: routeObj.route.stack[0].method,
@@ -44,22 +43,54 @@ export class InitService {
         }
       })
       .filter((item: any) => item !== undefined);
-    parentRoute = Array.from(parentRoute).filter((x: string) => x !== 'auth');
+    parentRoutes = Array.from(parentRoutes);
 
-    //Tạo route
+    //Tạo route cha
+    for (const parentRoute of parentRoutes) {
+      const exist = await this.routeModel.exists({
+        path: parentRoute,
+      });
+      if (exist) continue;
+      let isContinue = true;
+      for (const excluded of settings.EXCLUDED_ROUTE) {
+        if (this.getParentRoute(parentRoute) === excluded) {
+          isContinue = false;
+          break;
+        }
+      }
+      if (!isContinue) continue;
+      await this.routeModel.create({
+        path: parentRoute,
+      });
+    }
+
+    //Tạo permission
     for (const route of existingRoutes) {
       const existCheck = await this.permissionModel.findOne({
         path: route.path,
         method: route.method,
       });
-      if (
-        existCheck ||
-        this.getParentRoute(route.path) === 'auth' ||
-        this.getParentRoute(route.path) === 'me'
-      )
-        continue;
-      await this.permissionModel.create(route);
-      console.log(`Tạo thành công permission cho route ${route.path}`);
+      if (existCheck) continue;
+      let isContinue = true;
+      for (const excluded of settings.EXCLUDED_ROUTE) {
+        if (this.getParentRoute(route.path) === excluded) {
+          isContinue = false;
+          break;
+        }
+      }
+      if (!isContinue) continue;
+      const permission = await this.permissionModel.create(route);
+      const findParentRoute = await this.routeModel.findOne({
+        path: this.getParentRoute(route.path),
+      });
+      if (findParentRoute) {
+        let permissionSet = new Set(findParentRoute.permissions);
+        permissionSet.add(permission._id.toString());
+        const permissionArr = Array.from(permissionSet);
+        await this.routeModel.findByIdAndUpdate(findParentRoute._id, {
+          permissions: permissionArr,
+        });
+      }
     }
 
     //Xoá các route đã cũ
@@ -69,12 +100,7 @@ export class InitService {
         (x: { path: string; method: string }) =>
           route.path === x.path && route.method === x.method,
       );
-      if (
-        !find ||
-        this.getParentRoute(route.path) === 'auth' ||
-        this.getParentRoute(route.path) === 'me'
-      )
-        await this.permissionModel.findByIdAndDelete(route._id);
+      if (!find) await this.permissionModel.findByIdAndDelete(route._id);
     }
   }
 
@@ -84,12 +110,10 @@ export class InitService {
     if (roleCount > 0) return;
     //Nếu chưa có role nào thì tạo 2 role mặc định
     const memberRole = {
-      title: 'Thành viên',
-      slug: this.commonService.toSlug('Thành viên'),
+      title: settings.ROLES.MEMBER,
     };
     const adminRole = {
-      title: 'Quản trị viên',
-      slug: this.commonService.toSlug('Quản trị viên'),
+      title: settings.ROLES.ADMIN,
     };
     //Tạo 2 role mặc định
     await this.roleModel.create(memberRole);
@@ -104,10 +128,7 @@ export class InitService {
     if (userCount > 0) return;
     const rootUser = {
       email: this.configService.get('ROOT_USER'),
-      password: bcrypt.hashSync(
-        this.configService.get('ROOT_PASS'),
-        Number(this.configService.get('BCRYPT_LOOPS')),
-      ),
+      password: this.configService.get('ROOT_PASS'),
       actived: true,
       rootUser: true,
     };
