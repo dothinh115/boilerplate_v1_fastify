@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/schema/user.schema';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RefreshToken } from 'src/auth/dto/refresh-token.schema';
-import { ResponseService } from 'src/response/response.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { TQuery } from 'src/utils/model/query.model';
 import { UserService } from 'src/user/user.service';
@@ -16,7 +15,6 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(RefreshToken.name)
     private refreshTokenModel: Model<RefreshToken>,
-    private responseService: ResponseService,
     private userService: UserService,
     private commonService: CommonService,
     private mailService: MailService,
@@ -29,17 +27,13 @@ export class AuthService {
       })
       .select('+password');
     if (!emailCheck)
-      return this.responseService.failResponse(
-        'Email hoặc mật khẩu không đúng!',
-      );
+      throw new BadGatewayException('Email hoặc mật khẩu không đúng!');
     const passwordCheck = this.commonService.bcriptCompare(
       password,
       emailCheck.password,
     );
     if (!passwordCheck)
-      return this.responseService.failResponse(
-        'Email hoặc mật khẩu không đúng!',
-      );
+      throw new BadGatewayException('Email hoặc mật khẩu không đúng!');
     const access_token = this.commonService.getToken(
       { _id: emailCheck._id },
       '15m',
@@ -54,30 +48,29 @@ export class AuthService {
     };
     await this.refreshTokenModel.findOneAndDelete({ user: emailCheck._id });
     await this.refreshTokenModel.create(createRefreshToken);
-    return this.responseService.successResponse({
+    return {
       access_token,
       refresh_token,
-    });
+    };
   }
 
   async register(body: RegisterAuthDto, query: TQuery) {
-    const exist = await this.userModel.findOne({
+    const exists = await this.userModel.findOne({
       email: body.email,
     });
-    if (exist) return this.responseService.failResponse('Email đã được dùng!');
+    if (exists) throw new BadGatewayException('Email đã được dùng!');
     return await this.userService.create(body, query);
   }
 
   async verifyEmail(_id: string, template: string) {
-    const exist = await this.userModel.findById(_id);
-    if (!exist)
-      return this.responseService.failResponse('Không tồn tại user này!');
+    const exists = await this.userModel.findById(_id);
+    if (!exists) throw new BadGatewayException('Không tồn tại user này!');
     await this.mailService.send({
       from: 'BOILERPLATE',
       html: template,
       subject: 'Kích hoạt tài khoản của bạn',
-      to: exist.email,
+      to: exists.email,
     });
-    return this.responseService.successResponse('Thành công!');
+    return { message: 'Thành công!' };
   }
 }
