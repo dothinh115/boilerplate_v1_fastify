@@ -6,17 +6,17 @@ import { Model } from 'mongoose';
 import { Permission } from 'src/permission/schema/permission.schema';
 import { User } from 'src/user/schema/user.schema';
 import { TRoute } from 'src/utils/model/route.model';
-import { Role } from 'src/role/schema/role.schema';
 import settings from '../settings.json';
-import { Route } from 'src/route/schema/route.schema';
+import { Route } from 'src/utils/mongoose/schema/route.schema';
+import { Setting } from 'src/setting/schema/setting.schema';
 export class InitService {
   constructor(
     private adapterHost: HttpAdapterHost,
     private configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
-    @InjectModel(Role.name) private roleModel: Model<Role>,
     @InjectModel(Route.name) private routeModel: Model<Route>,
+    @InjectModel(Setting.name) private settingModel: Model<Setting>,
   ) {}
   private getParentRoute = (route: string) => {
     return route
@@ -25,6 +25,12 @@ export class InitService {
       .toString()
       .split('/')[0];
   };
+  //Tạo setting object
+  async createSetting() {
+    const exist = await this.settingModel.findOne();
+    if (!exist) await this.settingModel.create({});
+  }
+
   //Hàm check và lưu toàn bộ path trong dự án
   async handlePath() {
     const httpAdapter = this.adapterHost.httpAdapter;
@@ -110,35 +116,20 @@ export class InitService {
     }
   }
 
-  //Hàm check role
-  async roleCheck() {
-    const roleCount = await this.roleModel.find().countDocuments();
-    if (roleCount > 0) return;
-    //Nếu chưa có role nào thì tạo 2 role mặc định
-    const memberRole = {
-      title: settings.ROLES.MEMBER,
-    };
-    const adminRole = {
-      title: settings.ROLES.ADMIN,
-    };
-    //Tạo 2 role mặc định
-    await this.roleModel.create(memberRole);
-    console.log(`Tạo thành công role ${memberRole.title}`);
-    await this.roleModel.create(adminRole);
-    console.log(`Tạo thành công role ${adminRole.title}`);
-  }
-
   //Hàm check root_user
   async rootUserCheck() {
-    const userCount = await this.userModel.find().countDocuments();
-    if (userCount > 0) return;
+    const setting = await this.settingModel.findOne();
+    if (setting && setting.rootUser) return;
     const rootUser = {
       email: this.configService.get('ROOT_USER'),
       password: this.configService.get('ROOT_PASS'),
       actived: true,
       rootUser: true,
     };
-    await this.userModel.create(rootUser);
+    const created = await this.userModel.create(rootUser);
+    await this.settingModel.findOneAndUpdate({
+      rootUser: created._id,
+    });
     console.log(
       `Tạo thành công root user\nEmail: ${
         rootUser.email
@@ -151,8 +142,8 @@ export class InitService {
 export class OnInitService implements OnModuleInit {
   constructor(private initService: InitService) {}
   async onModuleInit() {
+    await this.initService.createSetting();
     await this.initService.handlePath();
-    await this.initService.roleCheck();
     await this.initService.rootUserCheck();
   }
 }

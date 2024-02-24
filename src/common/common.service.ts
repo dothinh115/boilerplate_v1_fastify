@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 
@@ -15,12 +14,6 @@ export class CommonService {
     str = str.replace(/-+/g, '-');
     str = str.replace(/^-+|-+$/g, '');
     return str;
-  }
-
-  async getId<T>(model: Model<T>) {
-    const lastRecord = await model.find().sort({ _id: -1 }).limit(1);
-    const _id = lastRecord.length === 0 ? 1 : +lastRecord[0]._id + 1;
-    return _id;
   }
 
   bcriptCompare(x: string, y: string) {

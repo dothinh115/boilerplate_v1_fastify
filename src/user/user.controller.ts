@@ -11,6 +11,7 @@ import {
   Query,
   UseGuards,
   Req,
+  Catch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -29,7 +30,11 @@ export class UserController {
   @Post()
   create(@Body() payload: CreateUserDto, @Query() query: TQuery) {
     payload = CreateUserDto.plainToClass(payload);
-    return this.userService.create(payload, query);
+    try {
+      return this.userService.create(payload, query);
+    } catch (error) {
+      return error;
+    }
   }
 
   @UseGuards(RolesGuard)

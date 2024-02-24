@@ -6,7 +6,6 @@ import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
-import { ResponseModule } from './response/response.module';
 import { MeModule } from './me/me.module';
 import { MailModule } from './mail/mail.module';
 import { PermisionModule } from './permission/permision.module';
@@ -14,7 +13,10 @@ import { DiscoveryModule } from '@nestjs/core';
 import { InitModule } from './init/init.module';
 import { StrategyModule } from './strategy/strategy.module';
 import { RouteModule } from './route/route.module';
+import { SettingModule } from './setting/setting.module';
 import globalPlugin from './utils/mongoose/middleware/global.middleware';
+import { Connection } from 'mongoose';
+
 @Global()
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import globalPlugin from './utils/mongoose/middleware/global.middleware';
     }),
     MongooseModule.forRoot(process.env.DB_URI, {
       dbName: process.env.DB_NAME,
-      connectionFactory: (connection) => {
+      connectionFactory: async (connection: Connection) => {
         connection.plugin(globalPlugin);
         return connection;
       },
@@ -33,7 +35,6 @@ import globalPlugin from './utils/mongoose/middleware/global.middleware';
     RoleModule,
     CommonModule,
     QueryModule,
-    ResponseModule,
     MeModule,
     MailModule,
     PermisionModule,
@@ -41,6 +42,7 @@ import globalPlugin from './utils/mongoose/middleware/global.middleware';
     InitModule,
     StrategyModule,
     RouteModule,
+    SettingModule,
   ],
 })
 export class AppModule {}

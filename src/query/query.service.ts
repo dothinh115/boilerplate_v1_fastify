@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { CommonService } from 'src/common/common.service';
 import { numberRegex } from 'src/utils/model/common.model';
 import { TPopulate, TQuery } from 'src/utils/model/query.model';
 import * as qs from 'qs';
-
+import settings from '../settings.json';
+import { toNonAccented } from 'src/utils/function/function';
 @Injectable()
 export class QueryService {
-  constructor(private commonService: CommonService) {}
   private handleField(fields: string) {
     let fieldHandle: any = {},
       selectObj: any,
@@ -88,6 +87,7 @@ export class QueryService {
         //trong trường hợp có path mới thì thêm vào mảng
         if (!exist) fieldSplit = [...fieldSplit, populateObj];
       }
+
       for (const field of fieldArr) {
         if (field === '*') {
           for (const key in selectObj) {
@@ -125,19 +125,24 @@ export class QueryService {
           }
         }
       } else {
-        //nếu là object
-        if (key === 'title' || key === 'name') {
-          for (const compareKey in object[key]) {
-            result = {
-              slug: {
-                //compare key sử dụng quy tắc của mongodb, ví dụ như $eq, $in, $regex...
-                [compareKey]: this.commonService.toSlug(
-                  object[key][compareKey],
-                ),
-              },
-            };
+        //nếu là object thì check text search để đưa về đúng trường cần tìm
+        let isTextSearch = false;
+        for (const field of settings.TEXT_SEARCH) {
+          if (key === field) {
+            for (const compareKey in object[key]) {
+              result = {
+                [`${field}NonAccented`]: {
+                  //compare key sử dụng quy tắc của mongodb, ví dụ như $eq, $in, $regex...
+                  [compareKey]: toNonAccented(object[key][compareKey]),
+                },
+              };
+            }
+            isTextSearch = true;
+            break;
           }
-        } else
+        }
+        //
+        if (!isTextSearch)
           result = {
             [key]: this.stringToNumberObject(object[key]),
           };
@@ -176,6 +181,7 @@ export class QueryService {
       populate = this.handleField(fields).populate;
       selectObj = this.handleField(fields).select;
     }
+
     if (filter)
       filterObj = this.handleFilter(
         qs.parse(qs.stringify(filter), { depth: 10 }),
@@ -186,10 +192,11 @@ export class QueryService {
 
     try {
       if (_id)
-        result = await model.findById(_id, { ...selectObj }).populate(populate);
+        result = await model.findById(_id).select(selectObj).populate(populate);
       else
         result = await model
-          .find({ ...filterObj }, { ...selectObj })
+          .find({ ...filterObj })
+          .select(selectObj)
           .populate(populate)
           .skip((+page - 1) * +limit)
           .limit(+limit)
