@@ -1,7 +1,6 @@
 {
-    "ROLES": {
-        "ADMIN": "Quản trị viên",
-        "MEMBER": "Thành viên"
-    },
-    "EXCLUDED_ROUTE": ["auth", "me", "route"]
+    "EXCLUDED_ROUTE": ["auth", "me", "route"],
+    "TEXT_SEARCH": ["title", "name"],
+    "TIMESTAMP": true,
+    "VERSION_KEY": false
 }

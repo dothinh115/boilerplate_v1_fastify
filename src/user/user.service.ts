@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
@@ -36,12 +35,7 @@ export class UserService {
     return this.responseService.successResponse(result);
   }
 
-  async update(
-    id: string,
-    body: UpdateUserDto,
-    query: TQuery,
-    req: CustomRequest,
-  ) {
+  async update(id: string, body: any, query: TQuery, req: CustomRequest) {
     const existCheck = await this.userModel.findById(id);
     if (!existCheck)
       return this.responseService.failResponse('Không tồn tại user này!');

@@ -11,6 +11,7 @@ export default class DefaultUser {
   @Prop({
     type: mongoose.Schema.Types.String,
     ref: 'Role',
+    default: null,
   })
   role: string;
   @Prop({ default: false, immutable: true, select: false })

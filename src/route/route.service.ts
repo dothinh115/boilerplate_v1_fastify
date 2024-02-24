@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { TQuery } from 'src/utils/model/query.model';
-import { Route } from './schema/route.schema';
+import { Route } from '../utils/mongoose/schema/route.schema';
 import { Model } from 'mongoose';
 import { QueryService } from 'src/query/query.service';
 import { ResponseService } from 'src/response/response.service';
