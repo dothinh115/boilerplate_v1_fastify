@@ -9,6 +9,7 @@ import { TRoute } from 'src/utils/model/route.model';
 import settings from '../settings.json';
 import { Route } from 'src/utils/mongoose/schema/route.schema';
 import { Setting } from 'src/setting/schema/setting.schema';
+
 export class InitService {
   constructor(
     private adapterHost: HttpAdapterHost,
@@ -37,6 +38,7 @@ export class InitService {
     const server = httpAdapter.getHttpServer();
     const router = server._events.request._router;
     let parentRoutes: any = new Set();
+    //lấy toàn bộ route
     const existingRoutes: { path: string; method: string }[] = router.stack
       .map((routeObj: TRoute) => {
         if (routeObj.route) {
@@ -106,13 +108,18 @@ export class InitService {
     }
 
     //Xoá các route đã cũ
-    const allRoutes = await this.permissionModel.find();
-    for (const route of allRoutes) {
-      const find = existingRoutes.find(
-        (x: { path: string; method: string }) =>
-          route.path === x.path && route.method === x.method,
-      );
-      if (!find) await this.permissionModel.findByIdAndDelete(route._id);
+    const savedRoutes = await this.permissionModel.find();
+    //xoá lần 1, so với các route đang tồn tại
+    for (const savedRoute of savedRoutes) {
+      const find = existingRoutes.find((route) => {
+        return (
+          route.path === savedRoute.path && route.method === savedRoute.method
+        );
+      });
+      for (const excludedRoute of settings.EXCLUDED_ROUTE) {
+        if (this.getParentRoute(savedRoute.path) === excludedRoute || !find)
+          await this.permissionModel.findByIdAndDelete(savedRoute._id);
+      }
     }
   }
 
