@@ -6,12 +6,9 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
-  ValidationPipe,
   Query,
   UseGuards,
   Req,
-  Catch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,7 +18,6 @@ import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { CustomRequest } from 'src/utils/model/request.model';
 
-@UsePipes(new ValidationPipe())
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

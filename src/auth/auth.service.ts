@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/schema/user.schema';
@@ -27,13 +27,13 @@ export class AuthService {
       })
       .select('+password');
     if (!emailCheck)
-      throw new BadGatewayException('Email hoặc mật khẩu không đúng!');
+      throw new BadRequestException('Email hoặc mật khẩu không đúng!');
     const passwordCheck = this.commonService.bcriptCompare(
       password,
       emailCheck.password,
     );
     if (!passwordCheck)
-      throw new BadGatewayException('Email hoặc mật khẩu không đúng!');
+      throw new BadRequestException('Email hoặc mật khẩu không đúng!');
     const access_token = this.commonService.getToken(
       { _id: emailCheck._id },
       '15m',
@@ -58,13 +58,13 @@ export class AuthService {
     const exists = await this.userModel.findOne({
       email: body.email,
     });
-    if (exists) throw new BadGatewayException('Email đã được dùng!');
+    if (exists) throw new BadRequestException('Email đã được dùng!');
     return await this.userService.create(body, query);
   }
 
   async verifyEmail(_id: string, template: string) {
     const exists = await this.userModel.findById(_id);
-    if (!exists) throw new BadGatewayException('Không tồn tại user này!');
+    if (!exists) throw new BadRequestException('Không tồn tại user này!');
     await this.mailService.send({
       from: 'BOILERPLATE',
       html: template,

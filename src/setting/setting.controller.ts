@@ -1,20 +1,10 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Query,
-  UsePipes,
-  ValidationPipe,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Query, UseGuards } from '@nestjs/common';
 import { SettingService } from './setting.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { TQuery } from 'src/utils/model/query.model';
 import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
 
-@UsePipes(new ValidationPipe())
 @Controller('setting')
 export class SettingController {
   constructor(private readonly settingService: SettingService) {}

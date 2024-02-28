@@ -6,8 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
-  ValidationPipe,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -18,7 +16,6 @@ import { TQuery } from 'src/utils/model/query.model';
 import { TokenRequired } from 'src/strategy';
 import { RolesGuard } from 'src/guard/roles.guard';
 
-@UsePipes(new ValidationPipe())
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

@@ -7,3 +7,5 @@ if [ $CHANGES ]; then
     echo "Có thay đổi"
 else echo "Không có thay đổi"
 fi
+sleep 60
+./needToPull.sh
