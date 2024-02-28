@@ -10,7 +10,8 @@ if [ $CHANGES ]; then
     #pm2 delete nest (xoá quá trình)
     #PORT=5555 pm2 start yarn --name "nest" -- start
     echo "Có thay đổi"
-else echo "Không có thay đổi"
+else 
+    echo "Không có thay đổi"
 fi
 sleep 60
 ./autoDeploy.sh
