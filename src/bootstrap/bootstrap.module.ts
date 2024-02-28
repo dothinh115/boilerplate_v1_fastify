@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { InitService, OnInitService } from './init.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/user/schema/user.schema';
 import {
@@ -8,6 +7,7 @@ import {
 } from 'src/permission/schema/permission.schema';
 import { Role, RoleSchema } from 'src/role/schema/role.schema';
 import { CommonModule } from 'src/common/common.module';
+import { BoostrapService, OnBootStrapService } from './bootstrap.service';
 
 @Module({
   imports: [
@@ -27,7 +27,7 @@ import { CommonModule } from 'src/common/common.module';
     ]),
     CommonModule,
   ],
-  providers: [OnInitService, InitService],
-  exports: [OnInitService],
+  providers: [OnBootStrapService, BoostrapService],
+  exports: [OnBootStrapService],
 })
-export class InitModule {}
+export class BootstrapModule {}

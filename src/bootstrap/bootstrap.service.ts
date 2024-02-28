@@ -1,4 +1,8 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  OnApplicationBootstrap,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,8 +13,9 @@ import { TRoute } from 'src/utils/model/route.model';
 import settings from '../settings.json';
 import { Route } from 'src/utils/mongoose/schema/route.schema';
 import { Setting } from 'src/setting/schema/setting.schema';
+import { exec } from 'child_process';
 
-export class InitService {
+export class BoostrapService {
   constructor(
     private adapterHost: HttpAdapterHost,
     private configService: ConfigService,
@@ -143,14 +148,39 @@ export class InitService {
       }\nPassword: ${this.configService.get('ROOT_PASS')}`,
     );
   }
+
+  //Hàm chạy auto deploy
+  async autoDeploy() {
+    return new Promise((resolve, reject) => {
+      const command = './autoDeploy.sh >> deploy.log 2>&1';
+      let result;
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Lỗi khi chạy auto deploy: ${error.message}`);
+          reject(`Lỗi khi chạy auto deploy: ${error.message}`);
+          return;
+        }
+        result = stdout;
+        console.log('Auto deploy đã chạy thành công.');
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      });
+      resolve(result);
+    });
+  }
 }
 
 @Injectable()
-export class OnInitService implements OnModuleInit {
-  constructor(private initService: InitService) {}
-  async onModuleInit() {
-    await this.initService.createSetting();
-    await this.initService.handlePath();
-    await this.initService.rootUserCheck();
+export class OnBootStrapService implements OnApplicationBootstrap {
+  constructor(private bootstrapService: BoostrapService) {}
+  async onApplicationBootstrap() {
+    await this.bootstrapService.createSetting();
+    console.log('Tạo thành công setting');
+    await this.bootstrapService.handlePath();
+    console.log('Tạo thành công các permissions');
+    await this.bootstrapService.rootUserCheck();
+    console.log('Tạo thành công root user');
+    await this.bootstrapService.autoDeploy();
+    console.log('Chạy thành công auto deploy');
   }
 }

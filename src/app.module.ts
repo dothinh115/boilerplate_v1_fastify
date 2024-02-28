@@ -10,12 +10,12 @@ import { MeModule } from './me/me.module';
 import { MailModule } from './mail/mail.module';
 import { PermisionModule } from './permission/permision.module';
 import { DiscoveryModule } from '@nestjs/core';
-import { InitModule } from './init/init.module';
 import { StrategyModule } from './strategy/strategy.module';
 import { RouteModule } from './route/route.module';
 import { SettingModule } from './setting/setting.module';
 import globalPlugin from './utils/mongoose/middleware/global.middleware';
 import { Connection } from 'mongoose';
+import { BootstrapModule } from './bootstrap/bootstrap.module';
 
 @Global()
 @Module({
@@ -39,7 +39,7 @@ import { Connection } from 'mongoose';
     MailModule,
     PermisionModule,
     DiscoveryModule,
-    InitModule,
+    BootstrapModule,
     StrategyModule,
     RouteModule,
     SettingModule,
