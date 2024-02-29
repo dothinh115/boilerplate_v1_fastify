@@ -15,7 +15,6 @@ import { SettingModule } from './modules/setting/setting.module';
 import globalPlugin from './middlewares/mongoose/global.middleware';
 import { Connection } from 'mongoose';
 import { BootstrapModule } from './modules/bootstrap/bootstrap.module';
-import { RegisterModule } from './modules/register/common.module';
 
 @Global()
 @Module({
@@ -42,7 +41,6 @@ import { RegisterModule } from './modules/register/common.module';
     StrategyModule,
     RouteModule,
     SettingModule,
-    RegisterModule,
   ],
 })
 export class AppModule {}
