@@ -19,6 +19,7 @@ export default function autoSlug(field: string = 'title') {
           slug: toSlug(payload[field] as string),
         });
       }
+      next();
     });
   };
 }
