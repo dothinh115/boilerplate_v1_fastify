@@ -9,7 +9,7 @@ export default function globalPlugin<T>(schema: Schema) {
 
   schema.pre('save', async function (next) {
     for (const field of settings.TEXT_SEARCH) {
-      if (this.schema.obj[field] !== undefined && this[field] !== undefined) {
+      if (this.schema.obj[field] && this[field]) {
         this.$set({
           [`${field}NonAccented`]: toNonAccented(this[field] as string),
         });
@@ -21,7 +21,7 @@ export default function globalPlugin<T>(schema: Schema) {
   schema.pre('findOneAndUpdate', async function (next) {
     const payload: any = this.getUpdate();
     for (const field of settings.TEXT_SEARCH) {
-      if (payload[field] !== undefined) {
+      if (payload[field]) {
         this.set({
           [`${field}NonAccented`]: toNonAccented(payload[field] as string),
         });
