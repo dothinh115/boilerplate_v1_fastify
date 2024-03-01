@@ -28,13 +28,6 @@ export default function userPlugin<T>(schema: Schema) {
   //check root user và hash password khi update
   schema.pre('findOneAndUpdate', async function (next) {
     const payload: any = this.getUpdate();
-    const options: any = this.getOptions();
-    const query: any = this.getQuery();
-    //check root user
-    const user = await this.model.findOne(query).select('+rootUser');
-    if (user.rootUser && user._id.toString() !== options._id.toString()) {
-      throw new Error('Không thể update root user');
-    }
     if (payload.password !== undefined)
       payload.password = bcrypt.hashSync(
         payload.password as string,
