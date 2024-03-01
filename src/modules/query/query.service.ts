@@ -169,7 +169,9 @@ export class QueryService {
   }
 
   async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
-    const { fields, filter, page, limit, meta } = query;
+    let { fields, filter, page, limit, meta } = query;
+    if (!page) page = 1;
+    if (!limit) limit = 10;
     let selectObj: any,
       populate: any[] = [],
       result: any[],
@@ -212,8 +214,9 @@ export class QueryService {
         if (meta === 'filter_count')
           filter_count = await model.find({ ...filterObj }).countDocuments();
       }
-    } catch (error) {}
-
+    } catch (error) {
+      console.log(error);
+    }
     const data = {
       data: result,
     };
@@ -228,7 +231,6 @@ export class QueryService {
       if (meta === 'total_count') data['meta'] = { total_count };
       if (meta === 'filter_count') data['meta'] = { filter_count };
     }
-
     return data;
   }
 }
