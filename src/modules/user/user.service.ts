@@ -33,7 +33,7 @@ export class UserService {
   async update(id: string, body: any, query: TQuery, req: CustomRequest) {
     const exists = await this.userModel.findById(id).select('+rootUser');
     if (!exists) throw new BadRequestException('Không tồn tại user này!');
-    const { _id } = req.user._id;
+    const { _id } = req.user;
     if (exists.rootUser && exists._id !== _id)
       throw new BadRequestException('Không thể update rootUser');
     await this.userModel.findByIdAndUpdate(id, body, { _id });
