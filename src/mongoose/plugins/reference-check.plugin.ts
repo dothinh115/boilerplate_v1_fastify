@@ -9,6 +9,7 @@ export default function referenceCheckPlugin<T>(schema: Schema<T>) {
     const allModelNames = this.model.db.modelNames();
     //chạy qua từng model để check
     for (const modelName of allModelNames) {
+      if (modelName === this.model.modelName) continue;
       const model = this.model.db.model(modelName);
       const modelSchema: Schema<Document> = model.schema;
       //chạy qua schema của model để check
