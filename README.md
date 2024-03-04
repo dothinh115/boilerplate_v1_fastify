@@ -4,8 +4,8 @@
 ## 1. Config
 - Copy file .env-example vào file .env của bạn và chỉnh sửa lại theo cấu hình của bạn.
 - Chỉnh sửa file settings.json
-  <pre>
-````javascript{
+ 
+```javascript{
     "EXCLUDED_ROUTE": ["auth", "me", "route"], //điền vào các route không muốn tạo ra permissions, auth, me và route là mặc định
     "TEXT_SEARCH": ["title", "name"], //điền vào các route muốn tìm kiếm bằng tiếng Việt
     "TIMESTAMP": true,
@@ -15,5 +15,5 @@
     },
     "REFERENCE_CHECK": false //Chức năng đang thử nghiệm
 }
-````
-</pre>
+
+
