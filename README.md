@@ -69,4 +69,25 @@ I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **met
       },            
     }
     ```
+    Tiếp tục chọn trường mong muốn bên trong author, thì đi vào trong 1 cấp nữa, cách nhau bởi dấu phẩy
+    ```text
+    author.name,author.createdAt
+    ```
+    Được kết quả
+    ```json
+    {
+     "_id": 1,
+     "title": "abcd",
+     "category": [
+         12,
+         17,
+         35,
+         3
+     ],
+     "author": {
+      "name": "xyz",
+      "createdAt": "2024-03-01T10:09:25.665Z",
+      },            
+    }
+    ```
     
