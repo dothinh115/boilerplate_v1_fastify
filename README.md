@@ -19,3 +19,7 @@
  Lúc này bạn đã chạy được dự án lên
 
 
+## 2. Sử dụng
+I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **meta**, **limit**, **page** để lấy được kết quả như ý.
+ ### Fields:
+ 
