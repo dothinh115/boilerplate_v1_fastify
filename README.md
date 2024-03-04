@@ -86,8 +86,11 @@ I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **met
       },            
     }
     ```
- ### Filter: Viết dưới dạng `filter[field][compareKey]=value`, với `compareKey` trùng với các quy tắc của mongo, ví dụ như `$eq` `$regex` `$gt`...
+ ### Filter: 
+ Viết dưới dạng `filter[field][compareKey]=value`, với `compareKey` trùng với các quy tắc của mongo, ví dụ như `$eq` `$regex` `$gt`...
 
- ### Sort: `sort=field` với field là trường được sort theo `asc` và `sort=-field` được sort theo `desc`.
+ ### Sort: 
+ `sort=field` với field là trường được sort theo `asc` và `sort=-field` được sort theo `desc`.
 
- ### Meta: `meta` được trả về với 2 field là `total_count` trả về số lượng document có trong collection, và `filter_count` trả về số lượng document thoả điều kiện của filter, hoặc đơn giản là dùng `meta=*` để lấy cả 2 kết quả này
+ ### Meta: 
+ `meta` được trả về với 2 field là `total_count` trả về số lượng document có trong collection, và `filter_count` trả về số lượng document thoả điều kiện của filter, hoặc đơn giản là dùng `meta=*` để lấy cả 2 kết quả này
