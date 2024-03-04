@@ -28,12 +28,12 @@ I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **met
 
  2.
   - Điền các trường muốn lấy, cách nhau bởi dấu phẩy ',' ví dụ như
-   ```javascrit
+   ```text
    title,name,slug
    ```
  3. Tham chiếu đến collection được liên kết:
   - Ví dụ chúng ta có được kết quả từ api
-    ```javascript
+    ```json
     {
             "_id": 1,
             "title": "abcd",
