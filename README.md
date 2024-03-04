@@ -35,38 +35,38 @@ I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **met
   - Ví dụ chúng ta có được kết quả từ api
     ```json
     {
-            "_id": 1,
-            "title": "abcd",
-            "category": [
-                12,
-                17,
-                35,
-                3
-            ],
-            "author": 1,            
-        },
+     "_id": 1,
+     "title": "abcd",
+     "category": [
+         12,
+         17,
+         35,
+         3
+     ],
+     "author": 1,            
+    },
     ```
     Muốn tham chiếu đến author chúng ta sẽ điền fields như sau
-    ```javascript
+    ```text
     author.*
     ```
     Được kết quả
-    ```javascript
+    ```json
     {
-       "_id": 1,
-       "title": "abcd",
-       "category": [
-           12,
-           17,
-           35,
-           3
-       ],
-       "author": {
-        "_id": 1,
-                "name": "xyz",
-                "createdAt": "2024-03-01T10:09:25.665Z",
-                "updatedAt": "2024-03-01T10:09:25.665Z",
+     "_id": 1,
+     "title": "abcd",
+     "category": [
+         12,
+         17,
+         35,
+         3
+     ],
+     "author": {
+      "_id": 1,
+      "name": "xyz",
+      "createdAt": "2024-03-01T10:09:25.665Z",
+      "updatedAt": "2024-03-01T10:09:25.665Z",
       },            
-        }
+    }
     ```
     
