@@ -94,3 +94,6 @@ I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **met
 
  ### Meta: 
  `meta` được trả về với 2 field là `total_count` trả về số lượng document có trong collection, và `filter_count` trả về số lượng document thoả điều kiện của filter, hoặc đơn giản là dùng `meta=*` để lấy cả 2 kết quả này
+
+ ### Limit và page: 
+ Chức năng để phân trang
