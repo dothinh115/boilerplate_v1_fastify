@@ -23,8 +23,8 @@
 I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **meta**, **limit**, **page** để lấy được kết quả như ý.
  ### Fields:
  1. 
-  - Ký tự '*' để lấy tất cả các trường mong muốn.
-  - Ký tự '-' để loại bỏ trường không mong muốn
+  - Ký tự `*` để lấy tất cả các trường mong muốn.
+  - Ký tự `-` để loại bỏ trường không mong muốn
 
  2.
   - Điền các trường muốn lấy, cách nhau bởi dấu phẩy ',' ví dụ như
