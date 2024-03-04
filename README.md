@@ -22,4 +22,51 @@
 ## 2. Sử dụng
 I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **meta**, **limit**, **page** để lấy được kết quả như ý.
  ### Fields:
- 
+ 1. 
+  - Ký tự '*' để lấy tất cả các trường mong muốn.
+  - Ký tự '-' để loại bỏ trường không mong muốn
+
+ 2.
+  - Điền các trường muốn lấy, cách nhau bởi dấu phẩy ',' ví dụ như
+   ```javascrit
+   title,name,slug
+   ```
+ 3. Tham chiếu đến collection được liên kết:
+  - Ví dụ chúng ta có được kết quả từ api
+    ```javascript
+    {
+            "_id": 1,
+            "title": "abcd",
+            "category": [
+                12,
+                17,
+                35,
+                3
+            ],
+            "author": 1,            
+        },
+    ```
+    Muốn tham chiếu đến author chúng ta sẽ điền fields như sau
+    ```javascript
+    author.*
+    ```
+    Được kết quả
+    ```javascript
+    {
+       "_id": 1,
+       "title": "abcd",
+       "category": [
+           12,
+           17,
+           35,
+           3
+       ],
+       "author": {
+        "_id": 1,
+                "name": "xyz",
+                "createdAt": "2024-03-01T10:09:25.665Z",
+                "updatedAt": "2024-03-01T10:09:25.665Z",
+      },            
+        }
+    ```
+    
