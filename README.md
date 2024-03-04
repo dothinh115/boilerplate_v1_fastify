@@ -86,4 +86,5 @@ I. Có thể sử dụng các param như **fields**, **filter**, **sort**, **met
       },            
     }
     ```
-    
+ ### Filter:
+  Viết dưới dạng `filter[field][compareKey]=value`, với `compareKey` trùng với các quy tắc của mongo, ví dụ như `$eq` `$regex` `$gt`...
