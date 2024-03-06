@@ -258,7 +258,7 @@ export class QueryService {
         }
         if (meta === 'total_count') total_count = await model.countDocuments();
         if (meta === 'filter_count')
-          filter_count = await model.find({ ...filterObj }).countDocuments();
+          filter_count = await model.countDocuments({ ...filterObj });
       }
     } catch (error) {
       console.log(error);
