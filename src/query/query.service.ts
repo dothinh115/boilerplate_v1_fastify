@@ -5,10 +5,31 @@ import { TPopulate, TQuery } from 'src/utils/models/query.model';
 import * as qs from 'qs';
 import settings from '../settings.json';
 import { toNonAccented } from 'src/utils/functions/function';
-import * as pluralize from 'pluralize';
 
 @Injectable()
 export class QueryService {
+  private populateMerge = (fieldSplit: any[], object: any) => {
+    let exists = false;
+    for (const key in fieldSplit) {
+      if (fieldSplit[key]['path'] === object['path']) {
+        if (object['populate']) {
+          let merge: any[] = [];
+          for (const item of object['populate']) {
+            merge.push(item);
+          }
+          if (fieldSplit[key]['populate']) {
+            fieldSplit[key]['populate'].push(...merge);
+          } else {
+            fieldSplit[key]['populate'] = merge;
+          }
+        }
+        exists = true;
+      }
+    }
+    if (!exists) fieldSplit = [...fieldSplit, object];
+    return fieldSplit;
+  };
+
   private handleField(fields: string) {
     let fieldHandle: any = {},
       selectObj: any,
@@ -84,10 +105,10 @@ export class QueryService {
                             }),
                           }),
                     }
-                  : { populate: prev }),
+                  : { populate: [prev] }),
               };
             },
-            null,
+            { populate: {} },
           );
         } else {
           populateObj = {
@@ -109,24 +130,9 @@ export class QueryService {
                 }),
           };
         }
-        let exist = false;
         //kiểm tra path đã tồn tại trong mảng chưa, nếu rồi thì phải merge các object cùng path với nhau
-        for (let index in fieldSplit) {
-          if (fieldSplit[index]['path'] === populateObj['path']) {
-            const merge = {
-              ...fieldSplit[index],
-              populate: [
-                fieldSplit[index]['populate'],
-                populateObj['populate'],
-              ],
-            };
-            fieldSplit[index] = merge;
-            exist = true; //nếu đã có path tồn tại thì ko thêm mới vào mảng nữa
-            break;
-          }
-        }
-        //trong trường hợp có path mới thì thêm vào mảng
-        if (!exist) fieldSplit = [...fieldSplit, populateObj];
+
+        fieldSplit = this.populateMerge(fieldSplit, populateObj);
       }
       for (const field of fieldArr) {
         if (field === '*') {
@@ -143,6 +149,7 @@ export class QueryService {
         if (item['select']?.includes('*')) delete item['select'];
       }
     }
+
     return {
       populate: fieldSplit,
       select: selectObj,
@@ -220,6 +227,7 @@ export class QueryService {
       total_count: number,
       filter_count: number,
       metaSelect: string[] = [];
+
     if (fields) {
       populate = this.handleField(fields).populate;
       selectObj = this.handleField(fields).select;
