@@ -508,7 +508,6 @@ export class QueryService {
         },
       };
     }
-
     const aggregate = await model.aggregate(aggregateArr);
 
     const result = await this.handleFind(

@@ -17,7 +17,7 @@ export default function userPlugin<T>(schema: Schema) {
   //hash password khi lưu
   schema.pre('save', async function (next) {
     if (this.password) {
-      this.password = bcrypt.hashSync(
+      this.password = bcrypt.hash(
         this.password as string,
         Number(process.env.BCRYPT_LOOPS),
       );
@@ -29,7 +29,7 @@ export default function userPlugin<T>(schema: Schema) {
   schema.pre('findOneAndUpdate', async function (next) {
     const payload: any = this.getUpdate();
     if (payload.password !== undefined)
-      payload.password = bcrypt.hashSync(
+      payload.password = bcrypt.hash(
         payload.password as string,
         Number(process.env.BCRYPT_LOOPS),
       );

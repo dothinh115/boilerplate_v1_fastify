@@ -25,6 +25,7 @@ export class AuthService {
   ) {}
   async login(body: LoginAuthDto) {
     const { email, password } = body;
+
     const exists = await this.userModel
       .findOne({
         email: email.toLowerCase(),
@@ -32,7 +33,7 @@ export class AuthService {
       .select('+password');
     if (!exists)
       throw new BadRequestException('Email hoặc mật khẩu không đúng!');
-    const passwordCheck = bcrypt.compareSync(password, exists.password);
+    const passwordCheck = bcrypt.compare(password, exists.password);
     if (!passwordCheck)
       throw new BadRequestException('Email hoặc mật khẩu không đúng!');
     const accessToken = this.jwtService.sign(
