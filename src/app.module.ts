@@ -15,6 +15,7 @@ import { SettingModule } from './setting/setting.module';
 import globalPlugin from './mongoose/plugins/global.plugin';
 import { Connection } from 'mongoose';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
+import { BcryptModule } from './bcrypt/bcrypt.module';
 
 @Global()
 @Module({
@@ -34,6 +35,7 @@ import { BootstrapModule } from './bootstrap/bootstrap.module';
     RoleModule,
     QueryModule,
     MeModule,
+    BcryptModule,
     MailModule,
     PermisionModule,
     DiscoveryModule,
