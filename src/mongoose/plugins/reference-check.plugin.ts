@@ -17,7 +17,7 @@ export default function referenceCheckPlugin<T>(schema: Schema<T>) {
         //nếu field không phải là string thì bỏ qua
         if (modelSchema.path(field).instance !== 'String') continue;
         const exists = await model.findOne({
-          [field]: record._id.toString(),
+          [field]: record?._id.toString(),
         });
 
         //1 trong các field của schema tham chiếu đến record thì lập tức dừng

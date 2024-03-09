@@ -16,6 +16,9 @@ import globalPlugin from './mongoose/plugins/global.plugin';
 import { Connection } from 'mongoose';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { BcryptModule } from './bcrypt/bcrypt.module';
+import { UploadModule } from './upload/upload.module';
+import { CustomMulterModule } from './multer/multer.module';
+import { CommonModule } from './common/common.module';
 
 @Global()
 @Module({
@@ -30,6 +33,7 @@ import { BcryptModule } from './bcrypt/bcrypt.module';
         return connection;
       },
     }),
+    CustomMulterModule,
     AuthModule,
     UserModule,
     RoleModule,
@@ -43,6 +47,8 @@ import { BcryptModule } from './bcrypt/bcrypt.module';
     StrategyModule,
     RouteModule,
     SettingModule,
+    UploadModule,
+    CommonModule,
   ],
 })
 export class AppModule {}
