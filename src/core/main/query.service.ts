@@ -164,6 +164,8 @@ export class QueryService {
       //nếu là mảng
       if (Array.isArray(object[key])) {
         for (const condition of object[key]) {
+          // Nếu là mảng thì tiếp tục lặp qua và tiếp tục đệ quy, đồng thời kiểm tra đã có key này bên trong result chưa, nếu có thì phải merge với nhau
+
           if (result[key]) {
             result[key] = [...result[key], this.handleFilter(condition)];
           } else {
