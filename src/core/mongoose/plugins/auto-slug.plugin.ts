@@ -7,7 +7,7 @@ export default function autoSlug<T>(
 ) {
   let { field } = options;
   const commonService = new CommonService();
-  if (!schema.path('slug')) {
+  if (!schema.path('slug') && schema.path(field)) {
     (schema as any).add({
       slug: String,
     });
