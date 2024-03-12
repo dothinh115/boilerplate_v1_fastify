@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Permission } from 'src/core/permission/schema/permission.schema';
 import { User } from 'src/core/user/schema/user.schema';
-import { TRoute } from 'src/core/utils/models/route.model';
 import settings from '../../../settings.json';
 import { Route } from 'src/core/route/schema/route.schema';
 import { Setting } from 'src/core/setting/schema/setting.schema';
@@ -38,24 +37,22 @@ export class BoostrapService {
   //Hàm check và lưu toàn bộ path trong dự án
   async handlePath() {
     const httpAdapter = this.adapterHost.httpAdapter;
-    const server = httpAdapter.getHttpServer();
-    const router = server._events.request._router;
+    const server = await httpAdapter.getInstance();
+    const routesMap = new Map(server.routes);
     let parentRoutes: any = new Set();
-    //lấy toàn bộ route
-    const existingRoutes: { path: string; method: string }[] = router.stack
-      .map((routeObj: TRoute) => {
-        if (routeObj.route) {
-          const route = this.getParentRoute(routeObj.route.path);
-          parentRoutes.add(route);
-          return {
-            path: routeObj.route.path,
-            method: routeObj.route.stack[0].method,
-          };
-        }
-      })
-      .filter((item: any) => item !== undefined);
-    parentRoutes = Array.from(parentRoutes);
+    const existingRoutes: { path: string; method: string }[] = [];
+    for (const [path, routeArray] of routesMap) {
+      for (const routeData of routeArray as Array<any>) {
+        const route = {
+          path: path as string,
+          method: routeData.method.toLowerCase(),
+        };
+        existingRoutes.push(route);
+      }
+      parentRoutes.add(this.getParentRoute(path as string));
+    }
 
+    parentRoutes = Array.from(parentRoutes);
     //Tạo route cha
     await this.routeModel.deleteMany();
     for (const parentRoute of parentRoutes) {
